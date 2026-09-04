@@ -61,7 +61,7 @@ function OrdersPage() {
       <section className="space-y-3">
         {orders.map((o) => {
           const product = products.find((p) => p.id === o.productId);
-          const instructions = `Order ${o.id} for ${o.buyer} in ${o.location}. Item: ${product?.title ?? "craft item"}. Your payout is ${o.payout} rupees. Next step: ${steps[Math.min(o.step, 2)].label} the parcel.`;
+          const instructions = `Order ${o.id} for ${o.buyer} in ${o.location}. Item: ${product?.title ?? "craft item"}. Your payout is ${o.payout} rupees. Next step: ${steps[Math.min(o.step, 2)]!.label} the parcel.`;
           return (
             <article key={o.id} className="craft-card space-y-3 p-3">
               <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3">
