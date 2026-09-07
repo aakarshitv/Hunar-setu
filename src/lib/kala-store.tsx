@@ -186,6 +186,7 @@ export function suggestedPrice(p: {
 type KalaContextValue = {
   language: LanguageCode;
   setLanguage: (code: LanguageCode) => void;
+  t: (key: TranslationKey) => string;
   products: Product[];
   orders: Order[];
   channels: Channel[];
