@@ -6,9 +6,9 @@ import { LANGUAGES, useKala } from "@/lib/kala-store";
 import { cn } from "@/lib/utils";
 
 const tabs = [
-  { to: "/", label: "Studio", icon: Mic },
-  { to: "/catalog", label: "Catalog", icon: Grid2x2 },
-  { to: "/orders", label: "Orders", icon: Package },
+  { to: "/", labelKey: "nav.studio", icon: Mic },
+  { to: "/catalog", labelKey: "nav.catalog", icon: Grid2x2 },
+  { to: "/orders", labelKey: "nav.orders", icon: Package },
 ] as const;
 
 export function AppShell({
@@ -20,7 +20,7 @@ export function AppShell({
   subtitle: string;
   children: ReactNode;
 }) {
-  const { language, setLanguage } = useKala();
+  const { language, setLanguage, t } = useKala();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
@@ -30,7 +30,7 @@ export function AppShell({
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 pt-4">
             <div className="min-w-0">
               <p className="flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.18em] text-primary uppercase">
-                <Sparkles className="size-3.5 shrink-0" /> KalaLink
+                <Sparkles className="size-3.5 shrink-0" /> HunarSetu
               </p>
               <h1 className="truncate text-xl font-semibold">{title}</h1>
               <p className="truncate text-xs text-muted-foreground">{subtitle}</p>
@@ -76,7 +76,7 @@ export function AppShell({
                     )}
                   >
                     <Icon className="size-5" />
-                    {t.label}
+                    {t(tab.labelKey)}
                   </Link>
                 </li>
               );
