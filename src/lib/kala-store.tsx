@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from "react";
 
+import { translate, type TranslationKey } from "@/lib/i18n";
 import pottery from "@/assets/craft-pottery.jpg";
 import textile from "@/assets/craft-textile.jpg";
 import brass from "@/assets/craft-brass.jpg";
@@ -220,10 +221,16 @@ export function KalaProvider({ children }: { children: ReactNode }) {
     return product;
   }, []);
 
+  const t = useCallback(
+    (key: TranslationKey) => translate(language, key),
+    [language],
+  );
+
   const value = useMemo(
     () => ({
       language,
       setLanguage,
+      t,
       products,
       orders,
       channels,
