@@ -238,7 +238,7 @@ export function KalaProvider({ children }: { children: ReactNode }) {
       advanceOrder,
       addProduct,
     }),
-    [language, products, orders, channels, toggleChannel, advanceOrder, addProduct],
+    [language, t, products, orders, channels, toggleChannel, advanceOrder, addProduct],
   );
 
   return <KalaContext.Provider value={value}>{children}</KalaContext.Provider>;
