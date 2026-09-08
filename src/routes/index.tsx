@@ -234,26 +234,27 @@ function StudioPage() {
 
           <div className="rounded-xl border border-primary/30 bg-primary/5 p-4">
             <p className="flex items-center gap-2 text-sm font-semibold">
-              <Coins className="size-4 text-primary" /> Fair price estimator
+              <Coins className="size-4 text-primary" /> {t("studio.fairPrice")}
             </p>
             <ul className="mt-3 space-y-2 text-sm">
               <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">Material cost</span>
+                <span className="text-muted-foreground">{t("studio.materialCost")}</span>
                 <span className="font-medium">{rupees(draft.materialCost)}</span>
               </li>
               <li className="flex items-center justify-between">
                 <span className="text-muted-foreground">
-                  Labour · {draft.labourHours} hrs × {rupees(draft.hourlyRate)}/hr
+                  {t("studio.labour")} · {draft.labourHours} {t("common.hrs")} ×{" "}
+                  {rupees(draft.hourlyRate)}
                 </span>
                 <span className="font-medium">{rupees(labour)}</span>
               </li>
               <li className="flex items-center justify-between">
-                <span className="text-muted-foreground">Fair market benchmark</span>
+                <span className="text-muted-foreground">{t("studio.benchmark")}</span>
                 <span className="font-medium">{rupees(draft.benchmark)}</span>
               </li>
             </ul>
             <div className="mt-3 flex items-center justify-between border-t border-primary/25 pt-3">
-              <span className="text-sm font-semibold">Suggested price</span>
+              <span className="text-sm font-semibold">{t("studio.suggested")}</span>
               <span className="text-2xl font-semibold text-primary">{rupees(price)}</span>
             </div>
           </div>
@@ -261,7 +262,7 @@ function StudioPage() {
           {published ? (
             <div className="space-y-2">
               <p className="flex items-center gap-2 rounded-xl bg-leaf/15 px-3 py-3 text-sm font-semibold">
-                <Check className="size-4 text-leaf" /> Published to your catalog
+                <Check className="size-4 text-leaf" /> {t("studio.published")}
               </p>
               <div className="grid grid-cols-2 gap-2">
                 <button
@@ -269,14 +270,14 @@ function StudioPage() {
                   onClick={() => setPreview(published)}
                   className="flex items-center justify-center gap-2 rounded-xl bg-secondary py-3 text-sm font-semibold text-secondary-foreground"
                 >
-                  <Eye className="size-4" /> Buyer view
+                  <Eye className="size-4" /> {t("studio.buyerView")}
                 </button>
                 <button
                   type="button"
                   onClick={() => navigate({ to: "/catalog" })}
                   className="rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground"
                 >
-                  Open catalog
+                  {t("studio.openCatalog")}
                 </button>
               </div>
             </div>
@@ -286,7 +287,7 @@ function StudioPage() {
               onClick={publish}
               className="w-full rounded-2xl bg-primary py-4 text-base font-semibold text-primary-foreground active:scale-[0.99]"
             >
-              Publish listing
+              {t("studio.publish")}
             </button>
           )}
         </section>
