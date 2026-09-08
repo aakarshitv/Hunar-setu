@@ -63,13 +63,13 @@ export function AppShell({
 
         <nav className="fixed bottom-0 z-30 w-full max-w-md border-t border-border bg-background/95 px-2 py-2 backdrop-blur">
           <ul className="grid grid-cols-3">
-            {tabs.map((t) => {
-              const active = pathname === t.to;
-              const Icon = t.icon;
+            {tabs.map((tab) => {
+              const active = pathname === tab.to;
+              const Icon = tab.icon;
               return (
-                <li key={t.to}>
+                <li key={tab.to}>
                   <Link
-                    to={t.to}
+                    to={tab.to}
                     className={cn(
                       "flex flex-col items-center gap-1 rounded-xl py-2 text-[11px] font-medium transition-colors",
                       active ? "bg-accent text-primary" : "text-muted-foreground",
