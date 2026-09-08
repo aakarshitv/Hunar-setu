@@ -11,13 +11,13 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/catalog")({
   head: () => ({
     meta: [
-      { title: "Catalog & Channel Sync — KalaLink" },
+      { title: "Catalog & Channel Sync — HunarSetu" },
       {
         name: "description",
         content:
           "Sync artisan listings to ONDC, craft cooperatives and global B2B export buyers, and track live stock and authenticity QR codes.",
       },
-      { property: "og:title", content: "Catalog & Channel Sync — KalaLink" },
+      { property: "og:title", content: "Catalog & Channel Sync — HunarSetu" },
       {
         property: "og:description",
         content: "One-tap syndication of handmade listings across marketplaces.",

@@ -13,12 +13,12 @@ export function ProductModal({ product, onClose }: { product: Product | null; on
       <div className="max-h-[92vh] w-full max-w-md overflow-y-auto rounded-t-3xl bg-background pb-8">
         <div className="sticky top-0 z-10 flex items-center justify-between bg-background/95 px-4 py-3 backdrop-blur">
           <p className="text-xs font-semibold tracking-[0.16em] text-muted-foreground uppercase">
-            Buyer view
+            {t("modal.buyerView")}
           </p>
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close product preview"
+            aria-label={t("modal.close")}
             className="grid size-9 place-items-center rounded-full bg-secondary text-secondary-foreground"
           >
             <X className="size-4" />
@@ -40,7 +40,7 @@ export function ProductModal({ product, onClose }: { product: Product | null; on
               <MapPin className="size-3.5" /> {product.origin}
             </span>
             <span className="inline-flex items-center gap-1 rounded-full bg-leaf px-2.5 py-1 text-[11px] font-semibold text-leaf-foreground">
-              <BadgeCheck className="size-3.5" /> Verified handmade
+              <BadgeCheck className="size-3.5" /> {t("modal.verified")}
             </span>
           </div>
 
@@ -54,20 +54,20 @@ export function ProductModal({ product, onClose }: { product: Product | null; on
 
           <div className="craft-card space-y-3 p-4">
             <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
-              <p className="min-w-0 text-sm font-semibold">The maker's story</p>
-              <SpeakButton text={product.story} label="Play" />
+              <p className="min-w-0 text-sm font-semibold">{t("modal.makerStory")}</p>
+              <SpeakButton text={product.story} label={t("common.play")} />
             </div>
             <p className="text-sm leading-relaxed text-muted-foreground">{product.story}</p>
           </div>
 
           <div className="craft-card space-y-3 p-4">
             <p className="flex items-center gap-2 text-sm font-semibold">
-              <ShieldCheck className="size-4 text-indigo" /> Craft authenticity certificate
+              <ShieldCheck className="size-4 text-indigo" /> {t("modal.certificate")}
             </p>
             <AuthenticityBadge giTag={product.giTag} />
             <p className="text-xs text-muted-foreground">
-              Materials: {product.materials.join(", ")} · Made in {product.labourHours} hours of
-              hand work.
+              {t("modal.materials")}: {product.materials.join(", ")} · {t("modal.madeIn")}{" "}
+              {product.labourHours} {t("modal.handHours")}
             </p>
           </div>
 
@@ -75,7 +75,7 @@ export function ProductModal({ product, onClose }: { product: Product | null; on
             type="button"
             className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-4 text-base font-semibold text-primary-foreground active:scale-[0.99]"
           >
-            <MessageSquareHeart className="size-5" /> Inquire / Place order
+            <MessageSquareHeart className="size-5" /> {t("modal.inquire")}
           </button>
         </div>
       </div>
