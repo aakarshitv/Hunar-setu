@@ -101,7 +101,7 @@ function OrdersPage() {
                       )}
                     >
                       <Icon className="size-5" />
-                      {s.label}
+                      {t(s.labelKey)}
                     </div>
                   );
                 })}
@@ -111,7 +111,7 @@ function OrdersPage() {
                 <p className="min-w-0 truncate text-xs text-muted-foreground">
                   {o.id} · {o.buyer}
                 </p>
-                <SpeakButton text={instructions} label="Hear order" />
+                <SpeakButton text={instructions} label={t("orders.hear")} />
               </div>
             </article>
           );
