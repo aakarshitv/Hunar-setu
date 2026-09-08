@@ -29,13 +29,13 @@ import cleanShot from "@/assets/craft-pottery.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "KalaLink — Artisan Studio & Market Linkage" },
+      { title: "HunarSetu — Artisan Studio & Market Linkage" },
       {
         name: "description",
         content:
-          "Photograph a craft, speak its story, and KalaLink builds a fair-priced listing that syncs to ONDC, cooperatives and export buyers.",
+          "Photograph a craft, speak its story, and HunarSetu builds a fair-priced listing that syncs to ONDC, cooperatives and export buyers.",
       },
-      { property: "og:title", content: "KalaLink — Artisan Studio" },
+      { property: "og:title", content: "HunarSetu — Artisan Studio" },
       {
         property: "og:description",
         content: "Voice-first smart cataloging and fair price estimates for marginalized artisans.",
@@ -63,7 +63,7 @@ const draft: NewProductInput = {
 };
 
 function StudioPage() {
-  const { addProduct } = useKala();
+  const { addProduct, t } = useKala();
   const navigate = useNavigate();
 
   const [cleaned, setCleaned] = useState(false);
@@ -94,7 +94,7 @@ function StudioPage() {
   };
 
   return (
-    <AppShell title="Artisan Studio" subtitle="Photo + voice = a ready listing">
+    <AppShell title={t("studio.title")} subtitle={t("studio.subtitle")}>
       <section className="craft-card overflow-hidden">
         <div className="relative">
           <img
@@ -108,7 +108,7 @@ function StudioPage() {
             )}
           />
           <span className="absolute top-3 left-3 rounded-full bg-background/90 px-2.5 py-1 text-[11px] font-semibold">
-            {cleaned ? "Studio shot" : "Your photo"}
+            {cleaned ? t("studio.studioShot") : t("studio.yourPhoto")}
           </span>
         </div>
 
@@ -136,7 +136,7 @@ function StudioPage() {
                 cleaned ? "bg-indigo text-indigo-foreground" : "bg-secondary text-secondary-foreground",
               )}
             >
-              <Wand2 className="size-4" /> AI background
+              <Wand2 className="size-4" /> {t("studio.aiBackground")}
             </button>
             <button
               type="button"
@@ -146,7 +146,7 @@ function StudioPage() {
                 enhanced ? "bg-indigo text-indigo-foreground" : "bg-secondary text-secondary-foreground",
               )}
             >
-              <Sparkles className="size-4" /> Auto enhance
+              <Sparkles className="size-4" /> {t("studio.autoEnhance")}
             </button>
           </div>
 
@@ -154,13 +154,13 @@ function StudioPage() {
             type="button"
             className="flex w-full items-center justify-center gap-2 rounded-xl border border-border py-3 text-xs font-semibold"
           >
-            <Camera className="size-4" /> Take another photo
+            <Camera className="size-4" /> {t("studio.takePhoto")}
           </button>
         </div>
       </section>
 
       <section className="craft-card flex flex-col items-center gap-3 p-5 text-center">
-        <p className="text-sm font-semibold">Speak about your craft</p>
+        <p className="text-sm font-semibold">{t("studio.speak")}</p>
         <div className="relative grid place-items-center">
           {recording && (
             <span className="pulse-ring absolute size-24 rounded-full bg-primary/40" />
@@ -193,17 +193,17 @@ function StudioPage() {
 
         <p className="text-xs text-muted-foreground">
           {recording
-            ? `Listening… ${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`
+            ? `${t("studio.listening")} ${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`
             : analysed
-              ? "Voice note understood — listing ready below"
-              : "Tap the microphone and describe your item in your language"}
+              ? t("studio.understood")
+              : t("studio.tapMic")}
         </p>
       </section>
 
       {analysed && (
         <section className="craft-card space-y-4 p-4">
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
-            <h2 className="min-w-0 truncate text-base font-semibold">Auto-generated listing</h2>
+            <h2 className="min-w-0 truncate text-base font-semibold">{t("studio.listing")}</h2>
             <SpeakButton text={`${draft.title}. ${draft.story}`} />
           </div>
 
@@ -212,16 +212,20 @@ function StudioPage() {
             <p className="text-xs text-muted-foreground">{draft.category}</p>
             <dl className="grid grid-cols-1 gap-2 pt-1">
               <div className="rounded-xl bg-secondary p-3">
-                <dt className="text-[11px] font-semibold text-muted-foreground">Craft technique</dt>
+                <dt className="text-[11px] font-semibold text-muted-foreground">
+                  {t("studio.technique")}
+                </dt>
                 <dd className="text-sm">{draft.technique}</dd>
               </div>
               <div className="rounded-xl bg-secondary p-3">
-                <dt className="text-[11px] font-semibold text-muted-foreground">Raw materials</dt>
+                <dt className="text-[11px] font-semibold text-muted-foreground">
+                  {t("studio.materials")}
+                </dt>
                 <dd className="text-sm">{draft.materials.join(" · ")}</dd>
               </div>
               <div className="rounded-xl bg-accent p-3">
                 <dt className="text-[11px] font-semibold text-accent-foreground">
-                  Cultural story (AI written)
+                  {t("studio.story")}
                 </dt>
                 <dd className="mt-1 text-sm leading-relaxed">{draft.story}</dd>
               </div>
