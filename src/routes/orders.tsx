@@ -9,13 +9,13 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/orders")({
   head: () => ({
     meta: [
-      { title: "Orders & Payouts — KalaLink" },
+      { title: "Orders & Payouts — HunarSetu" },
       {
         name: "description",
         content:
           "Icon-led order cards with a three-step pack, label and handover tracker, spoken instructions and instant UPI payout summaries.",
       },
-      { property: "og:title", content: "Orders & Payouts — KalaLink" },
+      { property: "og:title", content: "Orders & Payouts — HunarSetu" },
       {
         property: "og:description",
         content: "Visual dispatch tracking and instant payouts for artisans.",
