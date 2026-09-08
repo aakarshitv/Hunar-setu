@@ -1,10 +1,12 @@
 import { BadgeCheck, MapPin, MessageSquareHeart, ShieldCheck, X } from "lucide-react";
 
-import { rupees, type Product } from "@/lib/kala-store";
+import { rupees, useKala, type Product } from "@/lib/kala-store";
 import { AuthenticityBadge, SpeakButton } from "@/components/kala/shared";
 
 export function ProductModal({ product, onClose }: { product: Product | null; onClose: () => void }) {
+  const { t } = useKala();
   if (!product) return null;
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/50 px-0 backdrop-blur-sm">
