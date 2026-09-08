@@ -79,14 +79,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "KalaLink — Artisan Market Linkage" },
+      { title: "HunarSetu — Artisan Market Linkage" },
       {
         name: "description",
         content:
           "Voice-first cataloging, fair pricing and market linkage for marginalized artisans.",
       },
-      { name: "author", content: "KalaLink" },
-      { property: "og:title", content: "KalaLink — Artisan Market Linkage" },
+      { name: "author", content: "HunarSetu" },
+      { property: "og:title", content: "HunarSetu — Artisan Market Linkage" },
       {
         property: "og:description",
         content: "Smart cataloging and marketplace syndication built for artisans.",
