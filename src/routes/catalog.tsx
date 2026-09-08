@@ -11,13 +11,13 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/catalog")({
   head: () => ({
     meta: [
-      { title: "Catalog & Channel Sync — KalaLink" },
+      { title: "Catalog & Channel Sync — HunarSetu" },
       {
         name: "description",
         content:
           "Sync artisan listings to ONDC, craft cooperatives and global B2B export buyers, and track live stock and authenticity QR codes.",
       },
-      { property: "og:title", content: "Catalog & Channel Sync — KalaLink" },
+      { property: "og:title", content: "Catalog & Channel Sync — HunarSetu" },
       {
         property: "og:description",
         content: "One-tap syndication of handmade listings across marketplaces.",
@@ -28,15 +28,18 @@ export const Route = createFileRoute("/catalog")({
 });
 
 function CatalogPage() {
-  const { products, channels, toggleChannel } = useKala();
+  const { products, channels, toggleChannel, t } = useKala();
   const [selected, setSelected] = useState<Product | null>(null);
   const syncedCount = channels.filter((c) => c.synced).length;
 
   return (
-    <AppShell title="Marketplace" subtitle={`${products.length} crafts · ${syncedCount} channels live`}>
+    <AppShell
+      title={t("catalog.title")}
+      subtitle={`${products.length} ${t("catalog.crafts")} · ${syncedCount} ${t("catalog.channelsLive")}`}
+    >
       <section className="craft-card space-y-3 p-4">
         <h2 className="flex items-center gap-2 text-base font-semibold">
-          <RefreshCw className="size-4 text-primary" /> Channel syndication
+          <RefreshCw className="size-4 text-primary" /> {t("catalog.sync")}
         </h2>
         <ul className="space-y-2">
           {channels.map((c) => (
@@ -62,7 +65,7 @@ function CatalogPage() {
                   )}
                 >
                   {c.synced && <CheckCircle2 className="size-3.5" />}
-                  {c.synced ? "Synced" : "Tap to sync"}
+                  {c.synced ? t("catalog.synced") : t("catalog.tapToSync")}
                 </span>
               </button>
             </li>
@@ -72,7 +75,7 @@ function CatalogPage() {
 
       <section className="space-y-3">
         <h2 className="flex items-center gap-2 text-base font-semibold">
-          <Layers className="size-4 text-primary" /> Active catalog
+          <Layers className="size-4 text-primary" /> {t("catalog.active")}
         </h2>
         <div className="grid grid-cols-2 gap-3">
           {products.map((p) => (
@@ -94,7 +97,9 @@ function CatalogPage() {
                 <StatusBadge status={p.status} />
                 <p className="line-clamp-2 text-xs font-semibold">{p.title}</p>
                 <p className="text-sm font-semibold text-primary">{rupees(p.price)}</p>
-                <p className="text-[11px] text-muted-foreground">{p.stock} in stock</p>
+                <p className="text-[11px] text-muted-foreground">
+                  {p.stock} {t("catalog.inStock")}
+                </p>
                 <AuthenticityBadge giTag={p.giTag} />
               </div>
             </button>
