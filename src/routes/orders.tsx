@@ -37,24 +37,28 @@ function OrdersPage() {
   const paid = orders.filter((o) => o.step === 3).reduce((s, o) => s + o.payout, 0);
 
   return (
-    <AppShell title="Orders" subtitle={`${orders.length} orders · ${rupees(pending)} on the way`}>
+    <AppShell
+      title={t("orders.title")}
+      subtitle={`${orders.length} ${t("orders.count")} · ${rupees(pending)} ${t("orders.onTheWay")}`}
+    >
       <section className="craft-card space-y-3 p-4">
         <h2 className="flex items-center gap-2 text-base font-semibold">
-          <Wallet className="size-4 text-primary" /> Instant payouts
+          <Wallet className="size-4 text-primary" /> {t("orders.payouts")}
         </h2>
         <div className="grid grid-cols-2 gap-3">
           <div className="rounded-xl bg-accent p-3">
-            <p className="text-[11px] font-semibold text-accent-foreground">Pending balance</p>
+            <p className="text-[11px] font-semibold text-accent-foreground">
+              {t("orders.pending")}
+            </p>
             <p className="mt-1 text-xl font-semibold text-foreground">{rupees(pending)}</p>
           </div>
           <div className="rounded-xl bg-leaf/15 p-3">
-            <p className="text-[11px] font-semibold text-foreground">Paid to bank / UPI</p>
+            <p className="text-[11px] font-semibold text-foreground">{t("orders.paid")}</p>
             <p className="mt-1 text-xl font-semibold text-foreground">{rupees(paid)}</p>
           </div>
         </div>
         <p className="flex items-center gap-2 text-xs text-muted-foreground">
-          <Banknote className="size-4 shrink-0 text-leaf" /> Last transfer ₹4,100 to UPI
-          rekha@upi · settled in 2 hours
+          <Banknote className="size-4 shrink-0 text-leaf" /> {t("orders.lastTransfer")}
         </p>
       </section>
 
