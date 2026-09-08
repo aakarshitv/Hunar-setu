@@ -26,13 +26,13 @@ export const Route = createFileRoute("/orders")({
 });
 
 const steps = [
-  { label: "Pack", icon: Box },
-  { label: "Label", icon: Tag },
-  { label: "Handover", icon: Truck },
+  { label: "Pack", labelKey: "orders.pack", icon: Box },
+  { label: "Label", labelKey: "orders.label", icon: Tag },
+  { label: "Handover", labelKey: "orders.handover", icon: Truck },
 ] as const;
 
 function OrdersPage() {
-  const { orders, products } = useKala();
+  const { orders, products, t } = useKala();
   const pending = orders.filter((o) => o.step < 3).reduce((s, o) => s + o.payout, 0);
   const paid = orders.filter((o) => o.step === 3).reduce((s, o) => s + o.payout, 0);
 
