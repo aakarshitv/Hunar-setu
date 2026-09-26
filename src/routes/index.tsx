@@ -168,7 +168,7 @@ function StudioPage() {
           <button
             type="button"
             onClick={() => (recording ? stopRecording() : (setSeconds(0), setRecording(true)))}
-            aria-label={recording ? "Stop recording" : "Start recording"}
+            aria-label={recording ? t("studio.listening") : t("studio.speak")}
             className={cn(
               "relative grid size-24 place-items-center rounded-full text-primary-foreground active:scale-95",
               recording ? "bg-destructive" : "bg-primary",
@@ -203,7 +203,9 @@ function StudioPage() {
       {analysed && (
         <section className="craft-card space-y-4 p-4">
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
-            <h2 className="min-w-0 truncate text-base font-semibold">{t("studio.listing")}</h2>
+            <h2 className="min-w-0 truncate text-base font-semibold">
+              {t("studio.listing")}
+            </h2>
             <SpeakButton text={`${draft.title}. ${draft.story}`} />
           </div>
 
@@ -244,7 +246,7 @@ function StudioPage() {
               <li className="flex items-center justify-between">
                 <span className="text-muted-foreground">
                   {t("studio.labour")} · {draft.labourHours} {t("common.hrs")} ×{" "}
-                  {rupees(draft.hourlyRate)}
+                  {rupees(draft.hourlyRate)}/hr
                 </span>
                 <span className="font-medium">{rupees(labour)}</span>
               </li>

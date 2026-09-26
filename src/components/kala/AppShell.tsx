@@ -30,7 +30,7 @@ export function AppShell({
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 pt-4">
             <div className="min-w-0">
               <p className="flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.18em] text-primary uppercase">
-                <Sparkles className="size-3.5 shrink-0" /> HunarSetu
+                <Sparkles className="size-3.5 shrink-0" /> {t("app.name")}
               </p>
               <h1 className="truncate text-xl font-semibold">{title}</h1>
               <p className="truncate text-xs text-muted-foreground">{subtitle}</p>

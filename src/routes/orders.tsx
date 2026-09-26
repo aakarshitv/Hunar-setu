@@ -26,9 +26,9 @@ export const Route = createFileRoute("/orders")({
 });
 
 const steps = [
-  { label: "Pack", labelKey: "orders.pack", icon: Box },
-  { label: "Label", labelKey: "orders.label", icon: Tag },
-  { label: "Handover", labelKey: "orders.handover", icon: Truck },
+  { labelKey: "orders.pack", icon: Box },
+  { labelKey: "orders.label", icon: Tag },
+  { labelKey: "orders.handover", icon: Truck },
 ] as const;
 
 function OrdersPage() {
@@ -65,7 +65,9 @@ function OrdersPage() {
       <section className="space-y-3">
         {orders.map((o) => {
           const product = products.find((p) => p.id === o.productId);
-          const instructions = `Order ${o.id} for ${o.buyer} in ${o.location}. Item: ${product?.title ?? "craft item"}. Your payout is ${o.payout} rupees. Next step: ${steps[Math.min(o.step, 2)]!.label} the parcel.`;
+          const instructions = `${o.id} · ${product?.title ?? ""} · ${rupees(o.payout)} · ${t(
+            steps[Math.min(o.step, 2)]!.labelKey,
+          )}`;
           return (
             <article key={o.id} className="craft-card space-y-3 p-3">
               <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3">
@@ -92,7 +94,7 @@ function OrdersPage() {
                   const Icon = done ? PackageCheck : s.icon;
                   return (
                     <div
-                      key={s.label}
+                      key={s.labelKey}
                       className={cn(
                         "flex flex-1 flex-col items-center gap-1 rounded-xl py-2 text-[11px] font-semibold",
                         done
