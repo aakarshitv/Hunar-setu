@@ -1,6 +1,6 @@
-# KalaLink: Artisan's Bridge
+# HunarSetu: Artisan's Bridge
 
-Build a mobile-first web app called "KalaLink" — an AI-driven market linkage and smart cataloging platform designed for marginalized artisans. 
+Build a mobile-first web app called "HunarSetu" — an AI-driven market linkage and smart cataloging platform designed for marginalized artisans.
 
 Design Philosophy & UX:
 
@@ -53,16 +53,6 @@ Technical Requirements:
 - Create mock state management for adding a new item via the Studio flow so the new listing dynamically populates into the catalog and buyer preview.
 
 - Include language selection pills at the top (English, Hindi, Bengali, Tamil, etc.) with functional UI state switching.
-
-This project was built with [Lovable](https://lovable.dev).
-
-## Build with Lovable
-
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/b3274a45-aea4-4613-adeb-71886597b5ba).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
 
 ## Development
 
