@@ -96,6 +96,12 @@ function StudioPage() {
 
   const publish = () => setPublished(publishDraft(CLEAN.composites[bgStyle]));
 
+  // Once published, the listing follows the chosen background.
+  const chooseBg = (style: BgStyle) => {
+    setBgStyle(style);
+    if (published) setPublished(publishDraft(CLEAN.composites[style]));
+  };
+
   return (
     <AppShell screen="studio" title={t("studio.title")} subtitle={t("studio.subtitle")}>
       <section className="craft-card overflow-hidden">
@@ -126,7 +132,7 @@ function StudioPage() {
           )}
           {phase === "scanning" && <ScanOverlay label={t("studio.finding")} />}
           {cleaned ? (
-            <span className="pointer-events-none absolute bottom-3 left-3 rounded-full bg-leaf px-2.5 py-1 text-[11px] font-semibold text-leaf-foreground">
+            <span className="pointer-events-none absolute right-3 bottom-3 max-w-[calc(50%-1.25rem)] rounded-2xl bg-leaf px-2.5 py-1 text-right text-[11px] leading-tight font-semibold text-leaf-foreground">
               {t("studio.pixelsUnchanged")}
             </span>
           ) : (
@@ -143,7 +149,7 @@ function StudioPage() {
                 <button
                   key={style}
                   type="button"
-                  onClick={() => setBgStyle(style)}
+                  onClick={() => chooseBg(style)}
                   aria-pressed={bgStyle === style}
                   className="flex flex-col items-center gap-1 text-[11px] font-medium"
                 >
