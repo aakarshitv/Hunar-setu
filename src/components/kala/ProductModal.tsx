@@ -1,6 +1,9 @@
 import { BadgeCheck, MapPin, MessageSquareHeart, ShieldCheck, X } from "lucide-react";
 
+import { useEffect, useState } from "react";
+
 import { AudioButton } from "@/components/kala/AudioButton";
+import { QrSheet } from "@/components/kala/QrSheet";
 import { AuthenticityBadge } from "@/components/kala/shared";
 import { isClipId } from "@/content/narration";
 import { rupees, useKala, type Product } from "@/lib/kala-store";
@@ -14,6 +17,8 @@ export function ProductModal({
   onClose: () => void;
 }) {
   const { language, t } = useKala();
+  const [qrOpen, setQrOpen] = useState(false);
+  useEffect(() => setQrOpen(false), [product]);
   if (!product) return null;
 
   const copy = localize(product, language);
@@ -75,7 +80,11 @@ export function ProductModal({
             <p className="flex items-center gap-2 text-sm font-semibold">
               <ShieldCheck className="size-4 text-indigo" /> {t("modal.certificate")}
             </p>
-            <AuthenticityBadge giTag={product.giTag} />
+            <AuthenticityBadge
+              productId={product.id}
+              giTag={product.giTag}
+              onEnlarge={() => setQrOpen(true)}
+            />
             <p className="text-xs text-muted-foreground">
               {t("modal.materials")}: {product.materials.join(", ")} · {t("modal.madeIn")}{" "}
               {product.labourHours} {t("modal.handHours")}.
@@ -90,6 +99,7 @@ export function ProductModal({
           </button>
         </div>
       </div>
+      {qrOpen && <QrSheet product={product} onClose={() => setQrOpen(false)} />}
     </div>
   );
 }

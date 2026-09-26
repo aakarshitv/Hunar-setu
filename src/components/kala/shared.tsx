@@ -1,5 +1,4 @@
-import { QrCode } from "lucide-react";
-
+import { AuthenticityQr } from "@/components/kala/AuthenticityQr";
 import { useKala, type ProductStatus } from "@/lib/kala-store";
 import type { TranslationKey } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -30,14 +29,37 @@ export function StatusBadge({ status }: { status: ProductStatus }) {
   );
 }
 
-export function AuthenticityBadge({ giTag }: { giTag: string }) {
+export function AuthenticityBadge({
+  productId,
+  giTag,
+  onEnlarge,
+}: {
+  productId: string;
+  giTag: string;
+  onEnlarge?: () => void;
+}) {
   const { t } = useKala();
+  const qr = <AuthenticityQr productId={productId} size={40} label={t("qr.scan")} />;
   return (
     <div className="flex items-center gap-2 rounded-xl border border-border bg-canvas px-2.5 py-2">
-      <QrCode className="size-7 shrink-0 text-indigo" />
+      {onEnlarge ? (
+        <button
+          type="button"
+          onClick={onEnlarge}
+          aria-label={t("qr.tapToEnlarge")}
+          className="shrink-0 rounded bg-white p-0.5"
+        >
+          {qr}
+        </button>
+      ) : (
+        <span className="shrink-0 rounded bg-white p-0.5">{qr}</span>
+      )}
       <div className="min-w-0">
         <p className="text-[10px] font-semibold text-foreground">{t("badge.authQr")}</p>
         <p className="truncate text-[10px] text-muted-foreground">{giTag}</p>
+        {onEnlarge && (
+          <p className="text-[10px] font-semibold text-primary">{t("qr.tapToEnlarge")}</p>
+        )}
       </div>
     </div>
   );
