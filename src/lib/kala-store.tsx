@@ -1,8 +1,10 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 
+import { productCopy } from "@/content/narration";
 import { translate, type TranslationKey } from "@/lib/i18n";
 import { LANGUAGES, type LanguageCode } from "@/lib/languages";
 import { advanceStep, type Order } from "@/lib/orders";
+import { upsertProduct } from "@/lib/products";
 import pottery from "@/assets/craft-pottery.jpg";
 import textile from "@/assets/craft-textile.jpg";
 import brass from "@/assets/craft-brass.jpg";
@@ -48,12 +50,10 @@ export type Channel = {
 const seedProducts: Product[] = [
   {
     id: "p1",
-    title: "Hand-painted Terracotta Water Pot",
+    ...productCopy.p1.en,
     category: "Pottery & Clay",
     technique: "Wheel-thrown, kiln-fired, hand-painted",
     materials: ["River clay", "Natural oxide pigment"],
-    story:
-      "Shaped on a foot-powered wheel in a village where potters have read the monsoon in the clay for six generations. The eye motifs are painted to keep the water cool and the home watched over.",
     image: pottery,
     price: 1450,
     materialCost: 180,
@@ -67,12 +67,10 @@ const seedProducts: Product[] = [
   },
   {
     id: "p2",
-    title: "Indigo Ikat Handloom Shawl",
+    ...productCopy.p2.en,
     category: "Handloom Textile",
     technique: "Resist-dyed yarn, pit-loom weaving",
     materials: ["Organic cotton", "Natural indigo"],
-    story:
-      "Each thread is tied and dipped in a fermented indigo vat before it ever meets the loom, so the pattern is born in the yarn rather than printed on the cloth.",
     image: textile,
     price: 3200,
     materialCost: 640,
@@ -86,12 +84,10 @@ const seedProducts: Product[] = [
   },
   {
     id: "p3",
-    title: "Dhokra Brass Lantern",
+    ...productCopy.p3.en,
     category: "Metal Craft",
     technique: "Lost-wax casting, hand filigree",
     materials: ["Bell brass", "Beeswax", "Clay mould"],
-    story:
-      "Cast by the lost-wax method: a wax lattice is wrapped in clay, melted away, and replaced with molten brass — the mould breaks so no two lamps can ever repeat.",
     image: brass,
     price: 4100,
     materialCost: 1100,
@@ -144,21 +140,7 @@ const seedChannels: Channel[] = [
   { id: "gift", name: "Corporate Gifting Desk", note: "Festive bulk orders", synced: false },
 ];
 
-export type NewProductInput = {
-  title: string;
-  category: string;
-  technique: string;
-  materials: string[];
-  story: string;
-  image: string;
-  materialCost: number;
-  labourHours: number;
-  hourlyRate: number;
-  benchmark: number;
-  stock: number;
-  origin: string;
-  giTag: string;
-};
+export type NewProductInput = Omit<Product, "id" | "price" | "status">;
 
 export function suggestedPrice(p: {
   materialCost: number;
@@ -167,6 +149,33 @@ export function suggestedPrice(p: {
   benchmark: number;
 }) {
   return Math.round(p.materialCost + p.labourHours * p.hourlyRate + p.benchmark);
+}
+
+export const DEMO_DRAFT_ID = "p4";
+
+export const DEMO_DRAFT: NewProductInput = {
+  ...productCopy.p4.en,
+  category: "Pottery & Clay",
+  technique: "Wheel-thrown, pebble-burnished, wood-fired",
+  materials: ["River clay", "Rice husk"],
+  image: pottery,
+  materialCost: 220,
+  labourHours: 7,
+  hourlyRate: 125,
+  benchmark: 610,
+  stock: 5,
+  origin: "Kutch, Gujarat",
+  giTag: "GI: Khavda Pottery",
+};
+
+export function buildDraftProduct(image: string): Product {
+  return {
+    ...DEMO_DRAFT,
+    image,
+    id: DEMO_DRAFT_ID,
+    price: suggestedPrice(DEMO_DRAFT),
+    status: "listed",
+  };
 }
 
 type KalaContextValue = {
@@ -179,7 +188,7 @@ type KalaContextValue = {
   toggleChannel: (id: string) => void;
   advanceOrder: (id: string) => void;
   lastTransfer: number;
-  addProduct: (input: NewProductInput) => Product;
+  publishDraft: (image: string) => Product;
 };
 
 const KalaContext = createContext<KalaContextValue | null>(null);
@@ -206,14 +215,9 @@ export function KalaProvider({ children }: { children: ReactNode }) {
     [orders],
   );
 
-  const addProduct = useCallback((input: NewProductInput) => {
-    const product: Product = {
-      ...input,
-      id: `p${Math.random().toString(36).slice(2, 8)}`,
-      price: suggestedPrice(input),
-      status: "listed",
-    };
-    setProducts((prev) => [product, ...prev]);
+  const publishDraft = useCallback((image: string) => {
+    const product = buildDraftProduct(image);
+    setProducts((prev) => upsertProduct(prev, product));
     return product;
   }, []);
 
@@ -230,7 +234,7 @@ export function KalaProvider({ children }: { children: ReactNode }) {
       toggleChannel,
       advanceOrder,
       lastTransfer,
-      addProduct,
+      publishDraft,
     }),
     [
       language,
@@ -241,7 +245,7 @@ export function KalaProvider({ children }: { children: ReactNode }) {
       toggleChannel,
       advanceOrder,
       lastTransfer,
-      addProduct,
+      publishDraft,
     ],
   );
 

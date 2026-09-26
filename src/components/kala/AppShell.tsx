@@ -2,7 +2,9 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { Grid2x2, Mic, Package, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { ARTISAN, LANGUAGES, useKala } from "@/lib/kala-store";
+import { AudioButton } from "@/components/kala/AudioButton";
+import { LanguagePills } from "@/components/kala/LanguagePills";
+import { ARTISAN, useKala } from "@/lib/kala-store";
 import { cn } from "@/lib/utils";
 
 const tabs = [
@@ -14,13 +16,15 @@ const tabs = [
 export function AppShell({
   title,
   subtitle,
+  screen,
   children,
 }: {
   title: string;
   subtitle: string;
+  screen: "studio" | "catalog" | "orders";
   children: ReactNode;
 }) {
-  const { language, setLanguage, t } = useKala();
+  const { t } = useKala();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
@@ -40,22 +44,13 @@ export function AppShell({
             </div>
           </div>
 
-          <div className="mt-3 flex gap-2 overflow-x-auto px-4 pb-3 [scrollbar-width:none]">
-            {LANGUAGES.map((l) => (
-              <button
-                key={l.code}
-                type="button"
-                onClick={() => setLanguage(l.code)}
-                className={cn(
-                  "shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
-                  language === l.code
-                    ? "border-transparent bg-indigo text-indigo-foreground"
-                    : "border-border bg-secondary text-secondary-foreground",
-                )}
-              >
-                {l.native}
-              </button>
-            ))}
+          <div className="mt-3 flex items-center gap-2 px-4 pb-3">
+            <LanguagePills className="flex-1" />
+            <AudioButton
+              clips={[`screen.${screen}` as const]}
+              label={t("shell.screenGuide")}
+              iconOnly
+            />
           </div>
         </header>
 

@@ -13,11 +13,14 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/kala/AppShell";
-import { SpeakButton } from "@/components/kala/shared";
+import { AudioButton } from "@/components/kala/AudioButton";
+import { isClipId, type ClipId } from "@/content/narration";
 import { useCountUp } from "@/hooks/use-count-up";
 import { interpolate, type TranslationKey } from "@/lib/i18n";
 import { ARTISAN, rupees, useKala } from "@/lib/kala-store";
-import { payoutTotals, type Order } from "@/lib/orders";
+import { useNarrator } from "@/lib/narrator";
+import { payoutTotals, type Order, type OrderStep } from "@/lib/orders";
+import { localize } from "@/lib/products";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/orders")({
@@ -54,8 +57,14 @@ const nextActionKey: Record<0 | 1 | 2, TranslationKey> = {
 // Long enough for the tracker animation; stops a double tap from skipping a step.
 const BUSY_MS = 700;
 
+function orderClips(o: Order): ClipId[] {
+  const summary = `order.${o.id}`;
+  return [...(isClipId(summary) ? [summary] : []), `step.${o.step}` as const];
+}
+
 function OrdersPage() {
-  const { orders, products, advanceOrder, lastTransfer, t } = useKala();
+  const { orders, products, advanceOrder, lastTransfer, language, t } = useKala();
+  const { play } = useNarrator();
   const { pending, paid } = payoutTotals(orders);
   const pendingShown = useCountUp(pending);
   const paidShown = useCountUp(paid);
@@ -66,6 +75,8 @@ function OrdersPage() {
     setBusy(true);
     window.setTimeout(() => setBusy(false), BUSY_MS);
     advanceOrder(o.id);
+    const nextStep = (o.step + 1) as OrderStep;
+    play([`step.${nextStep}` as const]);
     if (o.step === 2) {
       toast.success(
         interpolate(t("orders.sentToast"), { amount: rupees(o.payout), upi: ARTISAN.upi }),
@@ -75,6 +86,7 @@ function OrdersPage() {
 
   return (
     <AppShell
+      screen="orders"
       title={t("orders.title")}
       subtitle={`${orders.length} ${t("orders.count")} · ${rupees(pending)} ${t("orders.onTheWay")}`}
     >
@@ -110,22 +122,20 @@ function OrdersPage() {
       <section className="space-y-3">
         {orders.map((o) => {
           const product = products.find((p) => p.id === o.productId);
-          const instructions = `${o.id} · ${product?.title ?? ""} · ${rupees(o.payout)} · ${t(
-            steps[Math.min(o.step, 2)]!.labelKey,
-          )}`;
+          const title = product ? localize(product, language).title : "";
           return (
             <article key={o.id} className="craft-card space-y-3 p-3">
               <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3">
                 <img
                   src={product?.image}
-                  alt={product?.title ?? "Order item"}
+                  alt={title || "Order item"}
                   loading="lazy"
                   width={800}
                   height={800}
                   className="size-16 shrink-0 rounded-xl object-cover"
                 />
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold">{product?.title}</p>
+                  <p className="truncate text-sm font-semibold">{title}</p>
                   <p className="flex items-center gap-1 truncate text-xs text-muted-foreground">
                     <MapPin className="size-3.5 shrink-0" /> {o.location}
                   </p>
@@ -180,7 +190,7 @@ function OrdersPage() {
                 <p className="min-w-0 truncate text-xs text-muted-foreground">
                   {o.id} · {o.buyer}
                 </p>
-                <SpeakButton text={instructions} label={t("orders.hear")} />
+                <AudioButton clips={orderClips(o)} label={t("orders.hear")} />
               </div>
             </article>
           );

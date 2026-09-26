@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "audio": "node scripts/generate-audio.ts"
   },
   "overrides": {
     "rolldown": "1.2.1"
