@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 
 import { productCopy } from "@/content/narration";
+import { CLEAN } from "@/lib/clean-assets";
 import { translate, type TranslationKey } from "@/lib/i18n";
 import { LANGUAGES, type LanguageCode } from "@/lib/languages";
 import { advanceStep, type Order } from "@/lib/orders";
@@ -158,7 +159,7 @@ export const DEMO_DRAFT: NewProductInput = {
   category: "Pottery & Clay",
   technique: "Wheel-thrown, pebble-burnished, wood-fired",
   materials: ["River clay", "Rice husk"],
-  image: pottery,
+  image: CLEAN.composites.studio,
   materialCost: 220,
   labourHours: 7,
   hourlyRate: 125,
