@@ -218,3 +218,43 @@
 @utility pulse-ring {
   animation: kala-pulse-ring 1.6s ease-out infinite;
 }
+
+@keyframes kala-scan {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(300%);
+  }
+}
+
+@utility scan-sweep {
+  animation: kala-scan 1.5s ease-in-out forwards;
+}
+
+@keyframes kala-mask-glow {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@utility mask-glow {
+  animation: kala-mask-glow 1.5s ease-in-out forwards;
+}
+
+@keyframes kala-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@utility fade-in-slow {
+  animation: kala-fade-in 700ms ease-out both;
+}

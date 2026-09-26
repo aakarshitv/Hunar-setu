@@ -6,6 +6,7 @@ import { AppShell } from "@/components/kala/AppShell";
 import { ProductModal } from "@/components/kala/ProductModal";
 import { AuthenticityBadge, StatusBadge } from "@/components/kala/shared";
 import { rupees, useKala, type Product } from "@/lib/kala-store";
+import { localize } from "@/lib/products";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/catalog")({
@@ -28,12 +29,13 @@ export const Route = createFileRoute("/catalog")({
 });
 
 function CatalogPage() {
-  const { products, channels, toggleChannel, t } = useKala();
+  const { products, channels, toggleChannel, language, t } = useKala();
   const [selected, setSelected] = useState<Product | null>(null);
   const syncedCount = channels.filter((c) => c.synced).length;
 
   return (
     <AppShell
+      screen="catalog"
       title={t("catalog.title")}
       subtitle={`${products.length} ${t("catalog.crafts")} · ${syncedCount} ${t("catalog.channelsLive")}`}
     >
@@ -87,7 +89,7 @@ function CatalogPage() {
             >
               <img
                 src={p.image}
-                alt={p.title}
+                alt={localize(p, language).title}
                 loading="lazy"
                 width={800}
                 height={800}
@@ -95,12 +97,12 @@ function CatalogPage() {
               />
               <div className="space-y-2 p-2.5">
                 <StatusBadge status={p.status} />
-                <p className="line-clamp-2 text-xs font-semibold">{p.title}</p>
+                <p className="line-clamp-2 text-xs font-semibold">{localize(p, language).title}</p>
                 <p className="text-sm font-semibold text-primary">{rupees(p.price)}</p>
                 <p className="text-[11px] text-muted-foreground">
                   {p.stock} {t("catalog.inStock")}
                 </p>
-                <AuthenticityBadge giTag={p.giTag} />
+                <AuthenticityBadge productId={p.id} giTag={p.giTag} />
               </div>
             </button>
           ))}
