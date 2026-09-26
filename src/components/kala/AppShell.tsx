@@ -2,7 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { Grid2x2, Mic, Package, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { LANGUAGES, useKala } from "@/lib/kala-store";
+import { ARTISAN, LANGUAGES, useKala } from "@/lib/kala-store";
 import { cn } from "@/lib/utils";
 
 const tabs = [
@@ -36,7 +36,7 @@ export function AppShell({
               <p className="truncate text-xs text-muted-foreground">{subtitle}</p>
             </div>
             <div className="grid size-11 shrink-0 place-items-center rounded-full bg-primary text-base font-semibold text-primary-foreground">
-              RD
+              {ARTISAN.initials}
             </div>
           </div>
 

@@ -7,11 +7,11 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import { Toaster } from "@/components/ui/sonner";
 import { KalaProvider } from "@/lib/kala-store";
-
 
 function NotFoundComponent() {
   return (
@@ -133,6 +133,7 @@ function RootComponent() {
       <KalaProvider>
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
+        <Toaster position="top-center" richColors />
       </KalaProvider>
     </QueryClientProvider>
   );

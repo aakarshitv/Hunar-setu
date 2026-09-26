@@ -1,9 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Banknote, Box, MapPin, PackageCheck, Tag, Truck, Wallet } from "lucide-react";
+import {
+  Banknote,
+  Box,
+  CheckCircle2,
+  MapPin,
+  PackageCheck,
+  Tag,
+  Truck,
+  Wallet,
+} from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 import { AppShell } from "@/components/kala/AppShell";
 import { SpeakButton } from "@/components/kala/shared";
-import { rupees, useKala } from "@/lib/kala-store";
+import { useCountUp } from "@/hooks/use-count-up";
+import { interpolate, type TranslationKey } from "@/lib/i18n";
+import { ARTISAN, rupees, useKala } from "@/lib/kala-store";
+import { payoutTotals, type Order } from "@/lib/orders";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/orders")({
@@ -31,10 +45,33 @@ const steps = [
   { labelKey: "orders.handover", icon: Truck },
 ] as const;
 
+const nextActionKey: Record<0 | 1 | 2, TranslationKey> = {
+  0: "orders.markPacked",
+  1: "orders.markLabelled",
+  2: "orders.handOver",
+};
+
+// Long enough for the tracker animation; stops a double tap from skipping a step.
+const BUSY_MS = 700;
+
 function OrdersPage() {
-  const { orders, products, t } = useKala();
-  const pending = orders.filter((o) => o.step < 3).reduce((s, o) => s + o.payout, 0);
-  const paid = orders.filter((o) => o.step === 3).reduce((s, o) => s + o.payout, 0);
+  const { orders, products, advanceOrder, lastTransfer, t } = useKala();
+  const { pending, paid } = payoutTotals(orders);
+  const pendingShown = useCountUp(pending);
+  const paidShown = useCountUp(paid);
+  const [busy, setBusy] = useState(false);
+
+  const onAdvance = (o: Order) => {
+    if (busy || o.step === 3) return;
+    setBusy(true);
+    window.setTimeout(() => setBusy(false), BUSY_MS);
+    advanceOrder(o.id);
+    if (o.step === 2) {
+      toast.success(
+        interpolate(t("orders.sentToast"), { amount: rupees(o.payout), upi: ARTISAN.upi }),
+      );
+    }
+  };
 
   return (
     <AppShell
@@ -50,15 +87,23 @@ function OrdersPage() {
             <p className="text-[11px] font-semibold text-accent-foreground">
               {t("orders.pending")}
             </p>
-            <p className="mt-1 text-xl font-semibold text-foreground">{rupees(pending)}</p>
+            <p className="mt-1 text-xl font-semibold text-foreground tabular-nums">
+              {rupees(pendingShown)}
+            </p>
           </div>
           <div className="rounded-xl bg-leaf/15 p-3">
             <p className="text-[11px] font-semibold text-foreground">{t("orders.paid")}</p>
-            <p className="mt-1 text-xl font-semibold text-foreground">{rupees(paid)}</p>
+            <p className="mt-1 text-xl font-semibold text-foreground tabular-nums">
+              {rupees(paidShown)}
+            </p>
           </div>
         </div>
         <p className="flex items-center gap-2 text-xs text-muted-foreground">
-          <Banknote className="size-4 shrink-0 text-leaf" /> {t("orders.lastTransfer")}
+          <Banknote className="size-4 shrink-0 text-leaf" />
+          {interpolate(t("orders.lastTransfer"), {
+            amount: rupees(lastTransfer),
+            upi: ARTISAN.upi,
+          })}
         </p>
       </section>
 
@@ -88,6 +133,13 @@ function OrdersPage() {
                 </div>
               </div>
 
+              <div className="h-1.5 overflow-hidden rounded-full bg-secondary">
+                <div
+                  className="h-full rounded-full bg-leaf transition-[width] duration-500 ease-out"
+                  style={{ width: `${(o.step / 3) * 100}%` }}
+                />
+              </div>
+
               <div className="flex items-center gap-2">
                 {steps.map((s, i) => {
                   const done = o.step > i;
@@ -96,7 +148,7 @@ function OrdersPage() {
                     <div
                       key={s.labelKey}
                       className={cn(
-                        "flex flex-1 flex-col items-center gap-1 rounded-xl py-2 text-[11px] font-semibold",
+                        "flex flex-1 flex-col items-center gap-1 rounded-xl py-2 text-[11px] font-semibold transition-colors duration-500",
                         done
                           ? "bg-leaf text-leaf-foreground"
                           : "bg-secondary text-muted-foreground",
@@ -108,6 +160,21 @@ function OrdersPage() {
                   );
                 })}
               </div>
+
+              {o.step === 3 ? (
+                <p className="flex items-center justify-center gap-2 rounded-xl bg-leaf/15 py-3 text-sm font-semibold">
+                  <CheckCircle2 className="size-4 text-leaf" /> {t("orders.done")}
+                </p>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => onAdvance(o)}
+                  disabled={busy}
+                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-3.5 text-sm font-semibold text-primary-foreground active:scale-[0.99] disabled:opacity-70"
+                >
+                  {t(nextActionKey[o.step])}
+                </button>
+              )}
 
               <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
                 <p className="min-w-0 truncate text-xs text-muted-foreground">
