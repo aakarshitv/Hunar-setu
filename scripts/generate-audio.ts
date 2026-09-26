@@ -13,14 +13,7 @@ import { dirname, join } from "node:path";
 
 import { narration } from "../src/content/narration.ts";
 import { LANGUAGE_CODES, type LanguageCode } from "../src/lib/languages.ts";
-
-type Provider = "sarvam" | "mac";
-type Entry = { file: string; hash: string };
-type Manifest = {
-  provider: Provider | null;
-  unsupported: LanguageCode[];
-  clips: Record<string, Partial<Record<LanguageCode, Entry>>>;
-};
+import { staleFiles, type Manifest } from "./lib/manifest.ts";
 
 const AUDIO_DIR = "public/audio";
 const MANIFEST_PATH = "src/content/audio-manifest.json";
@@ -118,13 +111,15 @@ for (const [clip, texts] of Object.entries(narration)) {
     const audio = provider === "sarvam" ? await synthSarvam(text, lang) : synthMac(text, voice);
     mkdirSync(dirname(join(AUDIO_DIR, file)), { recursive: true });
     writeFileSync(join(AUDIO_DIR, file), audio);
-    if (old && old.file !== file) rmSync(join(AUDIO_DIR, old.file), { force: true });
     made += 1;
     console.log(`✓ ${file}`);
   }
 }
 
 writeFileSync(MANIFEST_PATH, `${JSON.stringify(next, null, 2)}\n`);
+// Delete superseded files only now: if a run fails midway, the old manifest and its files
+// are still intact.
+for (const file of staleFiles(previous, next)) rmSync(join(AUDIO_DIR, file), { force: true });
 console.log(`Done: ${made} generated, ${kept} unchanged.`);
 if (next.unsupported.length > 0) {
   console.warn(`No ${provider} voice for: ${next.unsupported.join(", ")}`);
