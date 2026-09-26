@@ -18,8 +18,9 @@ import { staleFiles, type Manifest } from "./lib/manifest.ts";
 const AUDIO_DIR = "public/audio";
 const MANIFEST_PATH = "src/content/audio-manifest.json";
 
-const SARVAM_MODEL = "bulbul:v2";
-const SARVAM_SPEAKER = "anushka";
+// bulbul:v2 was deprecated in Sept 2026; v3 has a new speaker list (default "shubh").
+const SARVAM_MODEL = "bulbul:v3";
+const SARVAM_SPEAKER = "priya";
 const SARVAM_LANG: Record<LanguageCode, string> = {
   en: "en-IN",
   hi: "hi-IN",
