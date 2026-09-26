@@ -1,16 +1,21 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
+import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 
 import { translate, type TranslationKey } from "@/lib/i18n";
+import { LANGUAGES, type LanguageCode } from "@/lib/languages";
+import { advanceStep, type Order } from "@/lib/orders";
 import pottery from "@/assets/craft-pottery.jpg";
 import textile from "@/assets/craft-textile.jpg";
 import brass from "@/assets/craft-brass.jpg";
+
+export { LANGUAGES, type LanguageCode };
+export type { Order };
+
+export const ARTISAN = {
+  name: "Rekha Devi",
+  initials: "RD",
+  region: "Kutch, Gujarat",
+  upi: "rekha@upi",
+} as const;
 
 export type ProductStatus = "listed" | "pending" | "sold";
 
@@ -33,32 +38,12 @@ export type Product = {
   giTag: string;
 };
 
-export type Order = {
-  id: string;
-  productId: string;
-  buyer: string;
-  location: string;
-  payout: number;
-  step: 0 | 1 | 2 | 3;
-};
-
 export type Channel = {
   id: string;
   name: string;
   note: string;
   synced: boolean;
 };
-
-export const LANGUAGES = [
-  { code: "en", label: "English", native: "English" },
-  { code: "hi", label: "Hindi", native: "हिन्दी" },
-  { code: "bn", label: "Bengali", native: "বাংলা" },
-  { code: "ta", label: "Tamil", native: "தமிழ்" },
-  { code: "mr", label: "Marathi", native: "मराठी" },
-  { code: "or", label: "Odia", native: "ଓଡ଼ିଆ" },
-] as const;
-
-export type LanguageCode = (typeof LANGUAGES)[number]["code"];
 
 const seedProducts: Product[] = [
   {
@@ -193,6 +178,7 @@ type KalaContextValue = {
   channels: Channel[];
   toggleChannel: (id: string) => void;
   advanceOrder: (id: string) => void;
+  lastTransfer: number;
   addProduct: (input: NewProductInput) => Product;
 };
 
@@ -201,14 +187,24 @@ const KalaContext = createContext<KalaContextValue | null>(null);
 export function KalaProvider({ children }: { children: ReactNode }) {
   const [language, setLanguage] = useState<LanguageCode>("en");
   const [products, setProducts] = useState<Product[]>(seedProducts);
-  const [orders] = useState<Order[]>(seedOrders);
+  const [orders, setOrders] = useState<Order[]>(seedOrders);
+  // Seed value matches the already-settled order KL-4460.
+  const [lastTransfer, setLastTransfer] = useState(4100);
   const [channels, setChannels] = useState<Channel[]>(seedChannels);
 
   const toggleChannel = useCallback((id: string) => {
     setChannels((prev) => prev.map((c) => (c.id === id ? { ...c, synced: !c.synced } : c)));
   }, []);
 
-  const advanceOrder = useCallback(() => {}, []);
+  const advanceOrder = useCallback(
+    (id: string) => {
+      const order = orders.find((o) => o.id === id);
+      if (!order || order.step === 3) return;
+      if (order.step === 2) setLastTransfer(order.payout);
+      setOrders((prev) => advanceStep(prev, id));
+    },
+    [orders],
+  );
 
   const addProduct = useCallback((input: NewProductInput) => {
     const product: Product = {
@@ -221,10 +217,7 @@ export function KalaProvider({ children }: { children: ReactNode }) {
     return product;
   }, []);
 
-  const t = useCallback(
-    (key: TranslationKey) => translate(language, key),
-    [language],
-  );
+  const t = useCallback((key: TranslationKey) => translate(language, key), [language]);
 
   const value = useMemo(
     () => ({
@@ -236,9 +229,20 @@ export function KalaProvider({ children }: { children: ReactNode }) {
       channels,
       toggleChannel,
       advanceOrder,
+      lastTransfer,
       addProduct,
     }),
-    [language, t, products, orders, channels, toggleChannel, advanceOrder, addProduct],
+    [
+      language,
+      t,
+      products,
+      orders,
+      channels,
+      toggleChannel,
+      advanceOrder,
+      lastTransfer,
+      addProduct,
+    ],
   );
 
   return <KalaContext.Provider value={value}>{children}</KalaContext.Provider>;

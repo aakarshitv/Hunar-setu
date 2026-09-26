@@ -1,8 +1,8 @@
-import type { LanguageCode } from "@/lib/kala-store";
+import type { LanguageCode } from "@/lib/languages";
 
 export type TranslationKey = keyof typeof en;
 
-const en = {
+export const en = {
   "app.name": "HunarSetu",
   "nav.studio": "Studio",
   "nav.catalog": "Catalog",
@@ -52,11 +52,16 @@ const en = {
   "orders.payouts": "Instant payouts",
   "orders.pending": "Pending balance",
   "orders.paid": "Paid to bank / UPI",
-  "orders.lastTransfer": "Last transfer ₹4,100 to UPI rekha@upi · settled in 2 hours",
+  "orders.lastTransfer": "Last transfer {amount} to UPI {upi} · settled in 2 hours",
   "orders.pack": "Pack",
   "orders.label": "Label",
   "orders.handover": "Handover",
   "orders.hear": "Hear order",
+  "orders.markPacked": "Mark packed",
+  "orders.markLabelled": "Mark labelled",
+  "orders.handOver": "Hand over to courier",
+  "orders.done": "Handed to courier",
+  "orders.sentToast": "{amount} sent to UPI {upi}",
 
   "status.listed": "Listed",
   "status.pending": "Pending buyer",
@@ -121,11 +126,16 @@ const hi: Dict = {
   "orders.payouts": "तुरंत भुगतान",
   "orders.pending": "बकाया राशि",
   "orders.paid": "बैंक / यूपीआई में भेजा गया",
-  "orders.lastTransfer": "अंतिम भुगतान ₹4,100 यूपीआई rekha@upi · 2 घंटे में निपटा",
+  "orders.lastTransfer": "अंतिम भुगतान {amount} यूपीआई {upi} पर · 2 घंटे में निपटा",
   "orders.pack": "पैक",
   "orders.label": "लेबल",
   "orders.handover": "सौंपें",
   "orders.hear": "ऑर्डर सुनें",
+  "orders.markPacked": "पैक हो गया",
+  "orders.markLabelled": "लेबल लग गया",
+  "orders.handOver": "कूरियर को सौंपें",
+  "orders.done": "कूरियर को सौंपा",
+  "orders.sentToast": "{amount} यूपीआई {upi} पर भेजे गए",
   "status.listed": "सूचीबद्ध",
   "status.pending": "खरीदार प्रतीक्षित",
   "status.sold": "बिक गया",
@@ -186,11 +196,16 @@ const bn: Dict = {
   "orders.payouts": "তাৎক্ষণিক পেমেন্ট",
   "orders.pending": "বকেয়া ব্যালেন্স",
   "orders.paid": "ব্যাংক / ইউপিআই-তে দেওয়া",
-  "orders.lastTransfer": "শেষ পেমেন্ট ₹4,100 ইউপিআই rekha@upi · 2 ঘণ্টায় সম্পন্ন",
+  "orders.lastTransfer": "শেষ স্থানান্তর {amount} ইউপিআই {upi}-তে · ২ ঘণ্টায় নিষ্পন্ন",
   "orders.pack": "প্যাক",
   "orders.label": "লেবেল",
   "orders.handover": "হস্তান্তর",
   "orders.hear": "অর্ডার শুনুন",
+  "orders.markPacked": "প্যাক হয়েছে",
+  "orders.markLabelled": "লেবেল লাগানো হয়েছে",
+  "orders.handOver": "কুরিয়ারকে দিন",
+  "orders.done": "কুরিয়ারকে দেওয়া হয়েছে",
+  "orders.sentToast": "{amount} ইউপিআই {upi}-তে পাঠানো হয়েছে",
   "status.listed": "তালিকাভুক্ত",
   "status.pending": "ক্রেতার অপেক্ষা",
   "status.sold": "বিক্রি হয়েছে",
@@ -251,11 +266,16 @@ const ta: Dict = {
   "orders.payouts": "உடனடி பணப்பட்டுவாடா",
   "orders.pending": "நிலுவைத் தொகை",
   "orders.paid": "வங்கி / UPI க்கு அனுப்பியது",
-  "orders.lastTransfer": "கடைசி பரிமாற்றம் ₹4,100 UPI rekha@upi · 2 மணி நேரத்தில் முடிந்தது",
+  "orders.lastTransfer": "கடைசி பரிமாற்றம் {amount} யுபிஐ {upi}-க்கு · 2 மணி நேரத்தில் முடிந்தது",
   "orders.pack": "பொதி",
   "orders.label": "லேபிள்",
   "orders.handover": "ஒப்படைப்பு",
   "orders.hear": "ஆர்டரைக் கேள்",
+  "orders.markPacked": "பேக் ஆனது",
+  "orders.markLabelled": "லேபிள் ஒட்டியது",
+  "orders.handOver": "கூரியரிடம் ஒப்படை",
+  "orders.done": "கூரியரிடம் ஒப்படைக்கப்பட்டது",
+  "orders.sentToast": "{amount} யுபிஐ {upi}-க்கு அனுப்பப்பட்டது",
   "status.listed": "பட்டியலிடப்பட்டது",
   "status.pending": "வாங்குபவர் காத்திருப்பு",
   "status.sold": "விற்றது",
@@ -316,11 +336,16 @@ const mr: Dict = {
   "orders.payouts": "त्वरित पैसे",
   "orders.pending": "प्रलंबित रक्कम",
   "orders.paid": "बँक / यूपीआयला दिले",
-  "orders.lastTransfer": "शेवटचे हस्तांतरण ₹4,100 यूपीआय rekha@upi · 2 तासांत पूर्ण",
+  "orders.lastTransfer": "शेवटचे हस्तांतरण {amount} यूपीआय {upi} वर · 2 तासांत पूर्ण",
   "orders.pack": "पॅक",
   "orders.label": "लेबल",
   "orders.handover": "सुपूर्द",
   "orders.hear": "ऑर्डर ऐका",
+  "orders.markPacked": "पॅक झाले",
+  "orders.markLabelled": "लेबल लावले",
+  "orders.handOver": "कुरियरकडे सोपवा",
+  "orders.done": "कुरियरकडे सोपवले",
+  "orders.sentToast": "{amount} यूपीआय {upi} वर पाठवले",
   "status.listed": "यादीत",
   "status.pending": "खरेदीदाराची प्रतीक्षा",
   "status.sold": "विकले",
@@ -381,11 +406,16 @@ const or: Dict = {
   "orders.payouts": "ତୁରନ୍ତ ଦେୟ",
   "orders.pending": "ବକେୟା ରାଶି",
   "orders.paid": "ବ୍ୟାଙ୍କ / ୟୁପିଆଇକୁ ଦିଆଗଲା",
-  "orders.lastTransfer": "ଶେଷ ସ୍ଥାନାନ୍ତର ₹4,100 ୟୁପିଆଇ rekha@upi · 2 ଘଣ୍ଟାରେ ସମାପ୍ତ",
+  "orders.lastTransfer": "ଶେଷ ସ୍ଥାନାନ୍ତର {amount} ୟୁପିଆଇ {upi}କୁ · 2 ଘଣ୍ଟାରେ ସମାପ୍ତ",
   "orders.pack": "ପ୍ୟାକ",
   "orders.label": "ଲେବଲ",
   "orders.handover": "ହସ୍ତାନ୍ତର",
   "orders.hear": "ଅର୍ଡର ଶୁଣନ୍ତୁ",
+  "orders.markPacked": "ପ୍ୟାକ ହେଲା",
+  "orders.markLabelled": "ଲେବଲ ଲାଗିଲା",
+  "orders.handOver": "କୁରିଅରକୁ ଦିଅନ୍ତୁ",
+  "orders.done": "କୁରିଅରକୁ ଦିଆଗଲା",
+  "orders.sentToast": "{amount} ୟୁପିଆଇ {upi}କୁ ପଠାଗଲା",
   "status.listed": "ତାଲିକାଭୁକ୍ତ",
   "status.pending": "କ୍ରେତା ଅପେକ୍ଷା",
   "status.sold": "ବିକ୍ରି ହେଲା",
@@ -401,8 +431,14 @@ const or: Dict = {
   "modal.close": "ଉତ୍ପାଦ ପୂର୍ବଦୃଶ୍ୟ ବନ୍ଦ କରନ୍ତୁ",
 };
 
-const dictionaries: Record<LanguageCode, Dict> = { en, hi, bn, ta, mr, or };
+export const dictionaries: Record<LanguageCode, Dict> = { en, hi, bn, ta, mr, or };
 
 export function translate(language: LanguageCode, key: TranslationKey) {
   return dictionaries[language]?.[key] ?? en[key];
+}
+
+export function interpolate(template: string, vars: Record<string, string | number>) {
+  return template.replace(/\{(\w+)\}/g, (match, name: string) =>
+    name in vars ? String(vars[name]) : match,
+  );
 }
