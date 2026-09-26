@@ -1,30 +1,24 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import {
-  Camera,
-  Check,
-  Coins,
-  ImagePlus,
-  Mic,
-  Sparkles,
-  Wand2,
-  Eye,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+import { Camera, Check, Coins, ImagePlus, Mic, Sparkles, Wand2, Eye } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 import { AppShell } from "@/components/kala/AppShell";
+import { AudioButton } from "@/components/kala/AudioButton";
+import { BeforeAfterSlider } from "@/components/kala/BeforeAfterSlider";
+import { CleanPhoto } from "@/components/kala/CleanPhoto";
 import { ProductModal } from "@/components/kala/ProductModal";
-import { SpeakButton } from "@/components/kala/shared";
+import { ScanOverlay } from "@/components/kala/ScanOverlay";
+import { BG_STYLES, CLEAN, type BgStyle } from "@/lib/clean-assets";
 import {
+  DEMO_DRAFT,
+  DEMO_DRAFT_ID,
   rupees,
   suggestedPrice,
   useKala,
-  type NewProductInput,
   type Product,
 } from "@/lib/kala-store";
+import { localize } from "@/lib/products";
 import { cn } from "@/lib/utils";
-
-import rawShot from "@/assets/craft-raw.jpg";
-import cleanShot from "@/assets/craft-pottery.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -45,28 +39,22 @@ export const Route = createFileRoute("/")({
   component: StudioPage,
 });
 
-const draft: NewProductInput = {
-  title: "Hand-painted Terracotta Storage Jar",
-  category: "Pottery & Clay",
-  technique: "Wheel-thrown, sun-dried, kiln-fired",
-  materials: ["River clay", "Red oxide", "Natural lacquer"],
-  story:
-    "Turned on a village wheel from clay lifted out of the riverbed after the rains. The wide belly keeps grain cool through summer, and the banded motif is the pattern this family has painted on storage jars for four generations.",
-  image: cleanShot,
-  materialCost: 220,
-  labourHours: 7,
-  hourlyRate: 125,
-  benchmark: 610,
-  stock: 5,
-  origin: "Kutch, Gujarat",
-  giTag: "GI: Khavda Pottery",
-};
+type Phase = "raw" | "scanning" | "clean";
+const REVEAL_MS = 1500;
+const bgLabelKey = {
+  studio: "studio.bgStudio",
+  linen: "studio.bgLinen",
+  indigo: "studio.bgIndigo",
+} as const;
 
 function StudioPage() {
-  const { addProduct, t } = useKala();
+  const { publishDraft, language, t } = useKala();
   const navigate = useNavigate();
 
-  const [cleaned, setCleaned] = useState(false);
+  const [phase, setPhase] = useState<Phase>("raw");
+  const [bgStyle, setBgStyle] = useState<BgStyle>("studio");
+  const revealed = useRef(false);
+  const cleaned = phase === "clean";
   const [enhanced, setEnhanced] = useState(false);
   const [recording, setRecording] = useState(false);
   const [seconds, setSeconds] = useState(0);
@@ -76,43 +64,108 @@ function StudioPage() {
 
   useEffect(() => {
     if (!recording) return;
-    const t = setInterval(() => setSeconds((s) => s + 1), 1000);
-    return () => clearInterval(t);
+    const timer = setInterval(() => setSeconds((s) => s + 1), 1000);
+    return () => clearInterval(timer);
   }, [recording]);
 
-  const price = suggestedPrice(draft);
-  const labour = draft.labourHours * draft.hourlyRate;
+  const copy = localize(
+    { id: DEMO_DRAFT_ID, title: DEMO_DRAFT.title, story: DEMO_DRAFT.story },
+    language,
+  );
+  const price = suggestedPrice(DEMO_DRAFT);
+  const labour = DEMO_DRAFT.labourHours * DEMO_DRAFT.hourlyRate;
 
   const stopRecording = () => {
     setRecording(false);
     setAnalysed(true);
   };
 
-  const publish = () => {
-    const product = addProduct(draft);
-    setPublished(product);
+  useEffect(() => {
+    if (phase !== "scanning") return;
+    const timer = setTimeout(() => setPhase("clean"), REVEAL_MS);
+    return () => clearTimeout(timer);
+  }, [phase]);
+
+  // First tap runs the reveal; later taps toggle instantly.
+  const toggleClean = () => {
+    if (phase === "scanning") return;
+    if (phase === "clean") return setPhase("raw");
+    setPhase(revealed.current ? "clean" : "scanning");
+    revealed.current = true;
+  };
+
+  const publish = () => setPublished(publishDraft(CLEAN.composites[bgStyle]));
+
+  // Once published, the listing follows the chosen background.
+  const chooseBg = (style: BgStyle) => {
+    setBgStyle(style);
+    if (published) setPublished(publishDraft(CLEAN.composites[style]));
   };
 
   return (
-    <AppShell title={t("studio.title")} subtitle={t("studio.subtitle")}>
+    <AppShell screen="studio" title={t("studio.title")} subtitle={t("studio.subtitle")}>
       <section className="craft-card overflow-hidden">
-        <div className="relative">
-          <img
-            src={cleaned ? cleanShot : rawShot}
-            alt={cleaned ? "Craft on clean studio background" : "Raw workshop photo of the craft"}
-            width={800}
-            height={800}
-            className={cn(
-              "aspect-square w-full object-cover transition-all duration-500",
-              enhanced && "contrast-110 saturate-125 brightness-105",
-            )}
-          />
-          <span className="absolute top-3 left-3 rounded-full bg-background/90 px-2.5 py-1 text-[11px] font-semibold">
-            {cleaned ? t("studio.studioShot") : t("studio.yourPhoto")}
-          </span>
+        <div className="relative aspect-square">
+          {cleaned ? (
+            <BeforeAfterSlider
+              before={
+                <img
+                  src={CLEAN.raw}
+                  alt="Raw workshop photo of the pot"
+                  draggable={false}
+                  className="size-full object-cover"
+                />
+              }
+              after={<CleanPhoto bgStyle={bgStyle} enhanced={enhanced} />}
+              label={t("studio.compare")}
+              beforeLabel={t("studio.before")}
+              afterLabel={t("studio.after")}
+            />
+          ) : (
+            <img
+              src={CLEAN.raw}
+              alt="Raw workshop photo of the pot"
+              width={800}
+              height={800}
+              className="size-full object-cover"
+            />
+          )}
+          {phase === "scanning" && <ScanOverlay label={t("studio.finding")} />}
+          {cleaned ? (
+            <span className="pointer-events-none absolute right-3 bottom-3 max-w-[calc(50%-1.25rem)] rounded-2xl bg-leaf px-2.5 py-1 text-right text-[11px] leading-tight font-semibold text-leaf-foreground">
+              {t("studio.pixelsUnchanged")}
+            </span>
+          ) : (
+            <span className="absolute top-3 left-3 rounded-full bg-background/90 px-2.5 py-1 text-[11px] font-semibold">
+              {t("studio.yourPhoto")}
+            </span>
+          )}
         </div>
 
         <div className="space-y-3 p-4">
+          {cleaned && (
+            <div className="flex items-center justify-center gap-4">
+              {BG_STYLES.map((style) => (
+                <button
+                  key={style}
+                  type="button"
+                  onClick={() => chooseBg(style)}
+                  aria-pressed={bgStyle === style}
+                  className="flex flex-col items-center gap-1 text-[11px] font-medium"
+                >
+                  <img
+                    src={CLEAN.backgrounds[style]}
+                    alt=""
+                    className={cn(
+                      "size-11 rounded-full object-cover ring-2 ring-offset-2 ring-offset-card",
+                      bgStyle === style ? "ring-primary" : "ring-transparent",
+                    )}
+                  />
+                  {t(bgLabelKey[style])}
+                </button>
+              ))}
+            </div>
+          )}
           <div className="grid grid-cols-3 gap-2">
             {[0, 1, 2].map((i) => (
               <div
@@ -130,10 +183,12 @@ function StudioPage() {
           <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
-              onClick={() => setCleaned((v) => !v)}
+              onClick={toggleClean}
               className={cn(
                 "flex items-center justify-center gap-2 rounded-xl py-3 text-xs font-semibold",
-                cleaned ? "bg-indigo text-indigo-foreground" : "bg-secondary text-secondary-foreground",
+                phase !== "raw"
+                  ? "bg-indigo text-indigo-foreground"
+                  : "bg-secondary text-secondary-foreground",
               )}
             >
               <Wand2 className="size-4" /> {t("studio.aiBackground")}
@@ -141,9 +196,12 @@ function StudioPage() {
             <button
               type="button"
               onClick={() => setEnhanced((v) => !v)}
+              disabled={!cleaned}
               className={cn(
-                "flex items-center justify-center gap-2 rounded-xl py-3 text-xs font-semibold",
-                enhanced ? "bg-indigo text-indigo-foreground" : "bg-secondary text-secondary-foreground",
+                "flex items-center justify-center gap-2 rounded-xl py-3 text-xs font-semibold disabled:opacity-50",
+                enhanced
+                  ? "bg-indigo text-indigo-foreground"
+                  : "bg-secondary text-secondary-foreground",
               )}
             >
               <Sparkles className="size-4" /> {t("studio.autoEnhance")}
@@ -162,9 +220,7 @@ function StudioPage() {
       <section className="craft-card flex flex-col items-center gap-3 p-5 text-center">
         <p className="text-sm font-semibold">{t("studio.speak")}</p>
         <div className="relative grid place-items-center">
-          {recording && (
-            <span className="pulse-ring absolute size-24 rounded-full bg-primary/40" />
-          )}
+          {recording && <span className="pulse-ring absolute size-24 rounded-full bg-primary/40" />}
           <button
             type="button"
             onClick={() => (recording ? stopRecording() : (setSeconds(0), setRecording(true)))}
@@ -203,33 +259,31 @@ function StudioPage() {
       {analysed && (
         <section className="craft-card space-y-4 p-4">
           <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
-            <h2 className="min-w-0 truncate text-base font-semibold">
-              {t("studio.listing")}
-            </h2>
-            <SpeakButton text={`${draft.title}. ${draft.story}`} />
+            <h2 className="min-w-0 truncate text-base font-semibold">{t("studio.listing")}</h2>
+            <AudioButton clips={["product.p4"]} />
           </div>
 
           <div className="space-y-2 text-sm">
-            <p className="text-lg leading-tight font-semibold">{draft.title}</p>
-            <p className="text-xs text-muted-foreground">{draft.category}</p>
+            <p className="text-lg leading-tight font-semibold">{copy.title}</p>
+            <p className="text-xs text-muted-foreground">{DEMO_DRAFT.category}</p>
             <dl className="grid grid-cols-1 gap-2 pt-1">
               <div className="rounded-xl bg-secondary p-3">
                 <dt className="text-[11px] font-semibold text-muted-foreground">
                   {t("studio.technique")}
                 </dt>
-                <dd className="text-sm">{draft.technique}</dd>
+                <dd className="text-sm">{DEMO_DRAFT.technique}</dd>
               </div>
               <div className="rounded-xl bg-secondary p-3">
                 <dt className="text-[11px] font-semibold text-muted-foreground">
                   {t("studio.materials")}
                 </dt>
-                <dd className="text-sm">{draft.materials.join(" · ")}</dd>
+                <dd className="text-sm">{DEMO_DRAFT.materials.join(" · ")}</dd>
               </div>
               <div className="rounded-xl bg-accent p-3">
                 <dt className="text-[11px] font-semibold text-accent-foreground">
                   {t("studio.story")}
                 </dt>
-                <dd className="mt-1 text-sm leading-relaxed">{draft.story}</dd>
+                <dd className="mt-1 text-sm leading-relaxed">{copy.story}</dd>
               </div>
             </dl>
           </div>
@@ -241,18 +295,18 @@ function StudioPage() {
             <ul className="mt-3 space-y-2 text-sm">
               <li className="flex items-center justify-between">
                 <span className="text-muted-foreground">{t("studio.materialCost")}</span>
-                <span className="font-medium">{rupees(draft.materialCost)}</span>
+                <span className="font-medium">{rupees(DEMO_DRAFT.materialCost)}</span>
               </li>
               <li className="flex items-center justify-between">
                 <span className="text-muted-foreground">
-                  {t("studio.labour")} · {draft.labourHours} {t("common.hrs")} ×{" "}
-                  {rupees(draft.hourlyRate)}/hr
+                  {t("studio.labour")} · {DEMO_DRAFT.labourHours} {t("common.hrs")} ×{" "}
+                  {rupees(DEMO_DRAFT.hourlyRate)}/hr
                 </span>
                 <span className="font-medium">{rupees(labour)}</span>
               </li>
               <li className="flex items-center justify-between">
                 <span className="text-muted-foreground">{t("studio.benchmark")}</span>
-                <span className="font-medium">{rupees(draft.benchmark)}</span>
+                <span className="font-medium">{rupees(DEMO_DRAFT.benchmark)}</span>
               </li>
             </ul>
             <div className="mt-3 flex items-center justify-between border-t border-primary/25 pt-3">

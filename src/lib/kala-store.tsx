@@ -1,16 +1,24 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
+import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 
+import { productCopy } from "@/content/narration";
+import { CLEAN } from "@/lib/clean-assets";
 import { translate, type TranslationKey } from "@/lib/i18n";
+import { LANGUAGES, type LanguageCode } from "@/lib/languages";
+import { advanceStep, type Order } from "@/lib/orders";
+import { upsertProduct } from "@/lib/products";
 import pottery from "@/assets/craft-pottery.jpg";
 import textile from "@/assets/craft-textile.jpg";
 import brass from "@/assets/craft-brass.jpg";
+
+export { LANGUAGES, type LanguageCode };
+export type { Order };
+
+export const ARTISAN = {
+  name: "Rekha Devi",
+  initials: "RD",
+  region: "Kutch, Gujarat",
+  upi: "rekha@upi",
+} as const;
 
 export type ProductStatus = "listed" | "pending" | "sold";
 
@@ -31,15 +39,7 @@ export type Product = {
   status: ProductStatus;
   origin: string;
   giTag: string;
-};
-
-export type Order = {
-  id: string;
-  productId: string;
-  buyer: string;
-  location: string;
-  payout: number;
-  step: 0 | 1 | 2 | 3;
+  certId: string;
 };
 
 export type Channel = {
@@ -49,26 +49,13 @@ export type Channel = {
   synced: boolean;
 };
 
-export const LANGUAGES = [
-  { code: "en", label: "English", native: "English" },
-  { code: "hi", label: "Hindi", native: "हिन्दी" },
-  { code: "bn", label: "Bengali", native: "বাংলা" },
-  { code: "ta", label: "Tamil", native: "தமிழ்" },
-  { code: "mr", label: "Marathi", native: "मराठी" },
-  { code: "or", label: "Odia", native: "ଓଡ଼ିଆ" },
-] as const;
-
-export type LanguageCode = (typeof LANGUAGES)[number]["code"];
-
 const seedProducts: Product[] = [
   {
     id: "p1",
-    title: "Hand-painted Terracotta Water Pot",
+    ...productCopy.p1.en,
     category: "Pottery & Clay",
     technique: "Wheel-thrown, kiln-fired, hand-painted",
     materials: ["River clay", "Natural oxide pigment"],
-    story:
-      "Shaped on a foot-powered wheel in a village where potters have read the monsoon in the clay for six generations. The eye motifs are painted to keep the water cool and the home watched over.",
     image: pottery,
     price: 1450,
     materialCost: 180,
@@ -79,15 +66,14 @@ const seedProducts: Product[] = [
     status: "listed",
     origin: "Kutch, Gujarat",
     giTag: "GI: Khavda Pottery",
+    certId: "HS-2026-0017",
   },
   {
     id: "p2",
-    title: "Indigo Ikat Handloom Shawl",
+    ...productCopy.p2.en,
     category: "Handloom Textile",
     technique: "Resist-dyed yarn, pit-loom weaving",
     materials: ["Organic cotton", "Natural indigo"],
-    story:
-      "Each thread is tied and dipped in a fermented indigo vat before it ever meets the loom, so the pattern is born in the yarn rather than printed on the cloth.",
     image: textile,
     price: 3200,
     materialCost: 640,
@@ -98,15 +84,14 @@ const seedProducts: Product[] = [
     status: "pending",
     origin: "Pochampally, Telangana",
     giTag: "GI: Pochampally Ikat",
+    certId: "HS-2026-0023",
   },
   {
     id: "p3",
-    title: "Dhokra Brass Lantern",
+    ...productCopy.p3.en,
     category: "Metal Craft",
     technique: "Lost-wax casting, hand filigree",
     materials: ["Bell brass", "Beeswax", "Clay mould"],
-    story:
-      "Cast by the lost-wax method: a wax lattice is wrapped in clay, melted away, and replaced with molten brass — the mould breaks so no two lamps can ever repeat.",
     image: brass,
     price: 4100,
     materialCost: 1100,
@@ -117,6 +102,7 @@ const seedProducts: Product[] = [
     status: "sold",
     origin: "Bastar, Chhattisgarh",
     giTag: "GI: Bastar Dhokra",
+    certId: "HS-2026-0031",
   },
 ];
 
@@ -159,21 +145,7 @@ const seedChannels: Channel[] = [
   { id: "gift", name: "Corporate Gifting Desk", note: "Festive bulk orders", synced: false },
 ];
 
-export type NewProductInput = {
-  title: string;
-  category: string;
-  technique: string;
-  materials: string[];
-  story: string;
-  image: string;
-  materialCost: number;
-  labourHours: number;
-  hourlyRate: number;
-  benchmark: number;
-  stock: number;
-  origin: string;
-  giTag: string;
-};
+export type NewProductInput = Omit<Product, "id" | "price" | "status">;
 
 export function suggestedPrice(p: {
   materialCost: number;
@@ -182,6 +154,41 @@ export function suggestedPrice(p: {
   benchmark: number;
 }) {
   return Math.round(p.materialCost + p.labourHours * p.hourlyRate + p.benchmark);
+}
+
+export const DEMO_DRAFT_ID = "p4";
+
+export const DEMO_DRAFT: NewProductInput = {
+  ...productCopy.p4.en,
+  category: "Pottery & Clay",
+  technique: "Wheel-thrown, pebble-burnished, wood-fired",
+  materials: ["River clay", "Rice husk"],
+  image: CLEAN.composites.studio,
+  materialCost: 220,
+  labourHours: 7,
+  hourlyRate: 125,
+  benchmark: 610,
+  stock: 5,
+  origin: "Kutch, Gujarat",
+  giTag: "GI: Khavda Pottery",
+  certId: "HS-2026-0042",
+};
+
+export function buildDraftProduct(image: string): Product {
+  return {
+    ...DEMO_DRAFT,
+    image,
+    id: DEMO_DRAFT_ID,
+    price: suggestedPrice(DEMO_DRAFT),
+    status: "listed",
+  };
+}
+
+const STATIC_PRODUCTS: Product[] = [...seedProducts, buildDraftProduct(DEMO_DRAFT.image)];
+
+/** Products known without client state — used by the public verification page. */
+export function getStaticProduct(id: string) {
+  return STATIC_PRODUCTS.find((p) => p.id === id);
 }
 
 type KalaContextValue = {
@@ -193,7 +200,9 @@ type KalaContextValue = {
   channels: Channel[];
   toggleChannel: (id: string) => void;
   advanceOrder: (id: string) => void;
-  addProduct: (input: NewProductInput) => Product;
+  lastTransfer: number;
+  publishDraft: (image: string) => Product;
+  getProduct: (id: string) => Product | undefined;
 };
 
 const KalaContext = createContext<KalaContextValue | null>(null);
@@ -201,30 +210,37 @@ const KalaContext = createContext<KalaContextValue | null>(null);
 export function KalaProvider({ children }: { children: ReactNode }) {
   const [language, setLanguage] = useState<LanguageCode>("en");
   const [products, setProducts] = useState<Product[]>(seedProducts);
-  const [orders] = useState<Order[]>(seedOrders);
+  const [orders, setOrders] = useState<Order[]>(seedOrders);
+  // Seed value matches the already-settled order KL-4460.
+  const [lastTransfer, setLastTransfer] = useState(4100);
   const [channels, setChannels] = useState<Channel[]>(seedChannels);
 
   const toggleChannel = useCallback((id: string) => {
     setChannels((prev) => prev.map((c) => (c.id === id ? { ...c, synced: !c.synced } : c)));
   }, []);
 
-  const advanceOrder = useCallback(() => {}, []);
+  const advanceOrder = useCallback(
+    (id: string) => {
+      const order = orders.find((o) => o.id === id);
+      if (!order || order.step === 3) return;
+      if (order.step === 2) setLastTransfer(order.payout);
+      setOrders((prev) => advanceStep(prev, id));
+    },
+    [orders],
+  );
 
-  const addProduct = useCallback((input: NewProductInput) => {
-    const product: Product = {
-      ...input,
-      id: `p${Math.random().toString(36).slice(2, 8)}`,
-      price: suggestedPrice(input),
-      status: "listed",
-    };
-    setProducts((prev) => [product, ...prev]);
+  const publishDraft = useCallback((image: string) => {
+    const product = buildDraftProduct(image);
+    setProducts((prev) => upsertProduct(prev, product));
     return product;
   }, []);
 
-  const t = useCallback(
-    (key: TranslationKey) => translate(language, key),
-    [language],
+  const getProduct = useCallback(
+    (id: string) => products.find((p) => p.id === id) ?? getStaticProduct(id),
+    [products],
   );
+
+  const t = useCallback((key: TranslationKey) => translate(language, key), [language]);
 
   const value = useMemo(
     () => ({
@@ -236,9 +252,22 @@ export function KalaProvider({ children }: { children: ReactNode }) {
       channels,
       toggleChannel,
       advanceOrder,
-      addProduct,
+      lastTransfer,
+      publishDraft,
+      getProduct,
     }),
-    [language, t, products, orders, channels, toggleChannel, advanceOrder, addProduct],
+    [
+      language,
+      t,
+      products,
+      orders,
+      channels,
+      toggleChannel,
+      advanceOrder,
+      lastTransfer,
+      publishDraft,
+      getProduct,
+    ],
   );
 
   return <KalaContext.Provider value={value}>{children}</KalaContext.Provider>;
