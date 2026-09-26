@@ -1,12 +1,11 @@
 import { BadgeCheck, MapPin, MessageSquareHeart, ShieldCheck, X } from "lucide-react";
 
-import { rupees, useKala, type Product } from "@/lib/kala-store";
 import { AuthenticityBadge, SpeakButton } from "@/components/kala/shared";
+import { rupees, useKala, type Product } from "@/lib/kala-store";
 
 export function ProductModal({ product, onClose }: { product: Product | null; onClose: () => void }) {
   const { t } = useKala();
   if (!product) return null;
-
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/50 px-0 backdrop-blur-sm">
@@ -66,8 +65,8 @@ export function ProductModal({ product, onClose }: { product: Product | null; on
             </p>
             <AuthenticityBadge giTag={product.giTag} />
             <p className="text-xs text-muted-foreground">
-              {t("modal.materials")}: {product.materials.join(", ")} · {t("modal.madeIn")}{" "}
-              {product.labourHours} {t("modal.handHours")}
+              {t("modal.materials")}: {product.materials.join(", ")} · {t("modal.madeIn")} {product.labourHours}{" "}
+              {t("modal.handHours")}.
             </p>
           </div>
 
