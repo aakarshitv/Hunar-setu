@@ -1,0 +1,316 @@
+{
+  "provider": "mac",
+  "unsupported": [
+    "or"
+  ],
+  "clips": {
+    "product.p1": {
+      "en": {
+        "file": "en/product.p1.m4a",
+        "hash": "a2e6dd1dd68394e591a5a685501cca1effca2d92"
+      },
+      "hi": {
+        "file": "hi/product.p1.m4a",
+        "hash": "c715e6c77db9238196d5592ed9f76d6a6fd4d6f2"
+      },
+      "bn": {
+        "file": "bn/product.p1.m4a",
+        "hash": "9608f95f94e1d3a5ca52741f8d37c5680e9ed193"
+      },
+      "ta": {
+        "file": "ta/product.p1.m4a",
+        "hash": "0523effc3080b268a0c13bc913bc1f63a60710e5"
+      },
+      "mr": {
+        "file": "mr/product.p1.m4a",
+        "hash": "a39bf6fd455edd0c93407211f25236a5c72bd7b4"
+      }
+    },
+    "product.p2": {
+      "en": {
+        "file": "en/product.p2.m4a",
+        "hash": "4eb8da1c4cf32b3694a0e7bdd01567ac87050d68"
+      },
+      "hi": {
+        "file": "hi/product.p2.m4a",
+        "hash": "8e99632efa73577c11ec6e6a1dd15f6e0b561157"
+      },
+      "bn": {
+        "file": "bn/product.p2.m4a",
+        "hash": "7a0a5fc3a34cee4704f1b4e18411daf8ab7a6f85"
+      },
+      "ta": {
+        "file": "ta/product.p2.m4a",
+        "hash": "7d13d1e0f5f6246a6aa6b4ab5f97fa7a6fc8330f"
+      },
+      "mr": {
+        "file": "mr/product.p2.m4a",
+        "hash": "ac078c8f485d0910bceb09700a953d62a5690e91"
+      }
+    },
+    "product.p3": {
+      "en": {
+        "file": "en/product.p3.m4a",
+        "hash": "56efd4b750788af879152c3baea70fe3c2fce7b9"
+      },
+      "hi": {
+        "file": "hi/product.p3.m4a",
+        "hash": "bfb09db213039e028d2cd5c6c9ca4e31db591749"
+      },
+      "bn": {
+        "file": "bn/product.p3.m4a",
+        "hash": "4fe0de6edb41c0bf9e464cd7882540d456f54372"
+      },
+      "ta": {
+        "file": "ta/product.p3.m4a",
+        "hash": "d61c2aef20277a36e7a5a78b2ed4df18531cc724"
+      },
+      "mr": {
+        "file": "mr/product.p3.m4a",
+        "hash": "3b27f417a725f79746d5fef0013c8b7492b881eb"
+      }
+    },
+    "product.p4": {
+      "en": {
+        "file": "en/product.p4.m4a",
+        "hash": "bbf3bba3d946c99da55d452dde1de6714caf5283"
+      },
+      "hi": {
+        "file": "hi/product.p4.m4a",
+        "hash": "a3fb362d2b0b1c56590832227ad0ac93fdc621cb"
+      },
+      "bn": {
+        "file": "bn/product.p4.m4a",
+        "hash": "39620264232cd63c85be9aeefee7c3bf5b10d447"
+      },
+      "ta": {
+        "file": "ta/product.p4.m4a",
+        "hash": "5e59a2527fc3395938bd2c9da7e3af983b4239dd"
+      },
+      "mr": {
+        "file": "mr/product.p4.m4a",
+        "hash": "4cbb04cb965481f64a0870d7af7738acc423423d"
+      }
+    },
+    "screen.studio": {
+      "en": {
+        "file": "en/screen.studio.m4a",
+        "hash": "c4b7a76eabceddb9dec2d1b522d8a991cb48893d"
+      },
+      "hi": {
+        "file": "hi/screen.studio.m4a",
+        "hash": "b3367e1cc1b6edc5e36a1ac12877d642c292b583"
+      },
+      "bn": {
+        "file": "bn/screen.studio.m4a",
+        "hash": "c1eca8861ad5714015da97bc3f8bf51561e067e7"
+      },
+      "ta": {
+        "file": "ta/screen.studio.m4a",
+        "hash": "c847bb16c55e3af7256b63d6a80b27575e6bb334"
+      },
+      "mr": {
+        "file": "mr/screen.studio.m4a",
+        "hash": "77d017d83a7c03bca7f9d066f937a3612ca1777d"
+      }
+    },
+    "screen.catalog": {
+      "en": {
+        "file": "en/screen.catalog.m4a",
+        "hash": "17c541c4aed652a3b0a09518089d8cc134ec9e03"
+      },
+      "hi": {
+        "file": "hi/screen.catalog.m4a",
+        "hash": "9baa5af88c03d2091b6433245cc6fdd6de1ea87b"
+      },
+      "bn": {
+        "file": "bn/screen.catalog.m4a",
+        "hash": "b850db249a5cf0fce4ab8dc25a8dee378781b31f"
+      },
+      "ta": {
+        "file": "ta/screen.catalog.m4a",
+        "hash": "64bcea08b6b53a185094036a68a12ba69f9c7a49"
+      },
+      "mr": {
+        "file": "mr/screen.catalog.m4a",
+        "hash": "bdbc7b0d007b2c158bc5447ae841f7e4646f3bf0"
+      }
+    },
+    "screen.orders": {
+      "en": {
+        "file": "en/screen.orders.m4a",
+        "hash": "772f2a6f20d1a5aa941e525f353d884c403414fe"
+      },
+      "hi": {
+        "file": "hi/screen.orders.m4a",
+        "hash": "528e32b02d74b0ead6c8058ce67f0c8c7b4cdf7a"
+      },
+      "bn": {
+        "file": "bn/screen.orders.m4a",
+        "hash": "8a5dfcf6aa057226285001bd1f45cf64cae38fe8"
+      },
+      "ta": {
+        "file": "ta/screen.orders.m4a",
+        "hash": "556eae9ee3bd80ba8cbda65b6cb6dfce857da1da"
+      },
+      "mr": {
+        "file": "mr/screen.orders.m4a",
+        "hash": "b1ba6c1bc335da0e34bee256bc335ffa0605aaff"
+      }
+    },
+    "order.KL-4471": {
+      "en": {
+        "file": "en/order.KL-4471.m4a",
+        "hash": "b15a3b5089f94c76b367cecea1d45b7cd97a525a"
+      },
+      "hi": {
+        "file": "hi/order.KL-4471.m4a",
+        "hash": "ada3462bfcb638ae9dc9553bf6d0f36db857b919"
+      },
+      "bn": {
+        "file": "bn/order.KL-4471.m4a",
+        "hash": "4e0615a6bcfab7b919b832470f94aa2b57f3764c"
+      },
+      "ta": {
+        "file": "ta/order.KL-4471.m4a",
+        "hash": "615561bb5915edf6a142598d6ac6c1be28d13826"
+      },
+      "mr": {
+        "file": "mr/order.KL-4471.m4a",
+        "hash": "7ccf39913b1e1d0170dd2d4c747f5a0e997a2ad9"
+      }
+    },
+    "order.KL-4468": {
+      "en": {
+        "file": "en/order.KL-4468.m4a",
+        "hash": "5f3c4f3c70cd6b83881e5b57f1fd328a63fe1dbd"
+      },
+      "hi": {
+        "file": "hi/order.KL-4468.m4a",
+        "hash": "1d9e7f5bcb7572fcab336e0d44a084219b66bc52"
+      },
+      "bn": {
+        "file": "bn/order.KL-4468.m4a",
+        "hash": "ce5267bcfb0bb53946e40b3eeed95e12841b1570"
+      },
+      "ta": {
+        "file": "ta/order.KL-4468.m4a",
+        "hash": "ad91d88f8a9db9503be27dfbf18533e0ff0bb3e9"
+      },
+      "mr": {
+        "file": "mr/order.KL-4468.m4a",
+        "hash": "617473ddea1704f82f7b0f988629b37820e1aa28"
+      }
+    },
+    "order.KL-4460": {
+      "en": {
+        "file": "en/order.KL-4460.m4a",
+        "hash": "bf00a9096881125fd94fb3ef275471c99d3e9072"
+      },
+      "hi": {
+        "file": "hi/order.KL-4460.m4a",
+        "hash": "036b810600b6bf965b2cb6d317c0d5a2d90d2256"
+      },
+      "bn": {
+        "file": "bn/order.KL-4460.m4a",
+        "hash": "f067d37b7d4164c17973ac41d2d514b9f244bbb7"
+      },
+      "ta": {
+        "file": "ta/order.KL-4460.m4a",
+        "hash": "7e2f4495544b3e57884c61ecb8aad831ff86ce69"
+      },
+      "mr": {
+        "file": "mr/order.KL-4460.m4a",
+        "hash": "2089c60b5c408473712a7e3fc2854299113f3bc5"
+      }
+    },
+    "step.0": {
+      "en": {
+        "file": "en/step.0.m4a",
+        "hash": "5aa0d5da8b8c1cde0bc7091e2c775da941536f0f"
+      },
+      "hi": {
+        "file": "hi/step.0.m4a",
+        "hash": "7637ccd39be54ccf3667066db45fc21ea7cf9306"
+      },
+      "bn": {
+        "file": "bn/step.0.m4a",
+        "hash": "c6eebda35e0b84f6af273814c82297717e698114"
+      },
+      "ta": {
+        "file": "ta/step.0.m4a",
+        "hash": "eac83f55f69e355de5cf94dfd12af4a3a992a3f6"
+      },
+      "mr": {
+        "file": "mr/step.0.m4a",
+        "hash": "5299401b2a94599e1b33a50620aa3b6579883297"
+      }
+    },
+    "step.1": {
+      "en": {
+        "file": "en/step.1.m4a",
+        "hash": "a5b13e4a85cc945d4ed88d560ea2f041daa230f4"
+      },
+      "hi": {
+        "file": "hi/step.1.m4a",
+        "hash": "f759a3e21b4652143fdd184feccfa2cdfd07733b"
+      },
+      "bn": {
+        "file": "bn/step.1.m4a",
+        "hash": "f0938bba76d27c51c5bf8ec9b646efc94b83db2d"
+      },
+      "ta": {
+        "file": "ta/step.1.m4a",
+        "hash": "bb6bdac386d2a4b08120d23bfbd31d6fd1e397c5"
+      },
+      "mr": {
+        "file": "mr/step.1.m4a",
+        "hash": "f13e63db76cd9ab94ba7301166037cac71e90ac4"
+      }
+    },
+    "step.2": {
+      "en": {
+        "file": "en/step.2.m4a",
+        "hash": "cbd7b1e2cb251d8d083af568e367c69fa7db131e"
+      },
+      "hi": {
+        "file": "hi/step.2.m4a",
+        "hash": "d95ce137eec8563156332eba583c2a240b4b6314"
+      },
+      "bn": {
+        "file": "bn/step.2.m4a",
+        "hash": "ca751c76641e8eb4610d31234e979a55873bf741"
+      },
+      "ta": {
+        "file": "ta/step.2.m4a",
+        "hash": "88f8021abbe9fe6e0077a219ed6c9d68d700d3ed"
+      },
+      "mr": {
+        "file": "mr/step.2.m4a",
+        "hash": "76ccbd125b0bfb77adfba5863b5c198823fc39b0"
+      }
+    },
+    "step.3": {
+      "en": {
+        "file": "en/step.3.m4a",
+        "hash": "27c85147fe35c87c5b098e4013b74ea45d54d29a"
+      },
+      "hi": {
+        "file": "hi/step.3.m4a",
+        "hash": "512c22c89596d71befdfc75292807dcc1be0ea79"
+      },
+      "bn": {
+        "file": "bn/step.3.m4a",
+        "hash": "f7f2a2bbe5a4eddb734e9537e0a0b9a958c43ca0"
+      },
+      "ta": {
+        "file": "ta/step.3.m4a",
+        "hash": "4d6ee211ef50f7aa35fc63bc02204fd578a74f79"
+      },
+      "mr": {
+        "file": "mr/step.3.m4a",
+        "hash": "e094953d920a5037f4d9cbaeb4a2e1ca3e8bbe36"
+      }
+    }
+  }
+}

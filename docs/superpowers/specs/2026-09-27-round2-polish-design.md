@@ -88,7 +88,7 @@ export const localizedProducts: Record<string, Partial<Record<LanguageCode, { ti
   ta-IN, mr-IN, od-IN`, `output_audio_codec: "mp3"`; response `audios[0]` is base64.
   Key read from `.env.local` (`SARVAM_API_KEY`), which is git-ignored (`*.local`).
 - **Provider `mac` (interim fallback):** `say -v <voice> -o x.aiff` then
-  `afconvert -f m4af -d aac` → `.m4a`. Voices: en Rishi (en_IN), hi Lekha,
+  `afconvert -f m4af -d aac` → `.m4a`. Voices: en Aman (en_IN), hi Lekha,
   bn Piya, ta Vani, mr Lekha (reads Devanagari). **Odia unsupported** → listed in
   `manifest.unsupported`.
 - Usage: `node scripts/generate-audio.mjs --provider sarvam|mac [--force]`.

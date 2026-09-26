@@ -1,11 +1,23 @@
 import { BadgeCheck, MapPin, MessageSquareHeart, ShieldCheck, X } from "lucide-react";
 
-import { AuthenticityBadge, SpeakButton } from "@/components/kala/shared";
+import { AudioButton } from "@/components/kala/AudioButton";
+import { AuthenticityBadge } from "@/components/kala/shared";
+import { isClipId } from "@/content/narration";
 import { rupees, useKala, type Product } from "@/lib/kala-store";
+import { localize } from "@/lib/products";
 
-export function ProductModal({ product, onClose }: { product: Product | null; onClose: () => void }) {
-  const { t } = useKala();
+export function ProductModal({
+  product,
+  onClose,
+}: {
+  product: Product | null;
+  onClose: () => void;
+}) {
+  const { language, t } = useKala();
   if (!product) return null;
+
+  const copy = localize(product, language);
+  const clip = `product.${product.id}`;
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/50 px-0 backdrop-blur-sm">
@@ -26,7 +38,7 @@ export function ProductModal({ product, onClose }: { product: Product | null; on
 
         <img
           src={product.image}
-          alt={product.title}
+          alt={copy.title}
           loading="lazy"
           width={800}
           height={800}
@@ -44,7 +56,7 @@ export function ProductModal({ product, onClose }: { product: Product | null; on
           </div>
 
           <div>
-            <h2 className="text-2xl leading-tight font-semibold">{product.title}</h2>
+            <h2 className="text-2xl leading-tight font-semibold">{copy.title}</h2>
             <p className="mt-1 text-sm text-muted-foreground">
               {product.category} · {product.technique}
             </p>
@@ -54,9 +66,9 @@ export function ProductModal({ product, onClose }: { product: Product | null; on
           <div className="craft-card space-y-3 p-4">
             <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
               <p className="min-w-0 text-sm font-semibold">{t("modal.makerStory")}</p>
-              <SpeakButton text={product.story} label={t("common.play")} />
+              {isClipId(clip) && <AudioButton clips={[clip]} label={t("common.play")} />}
             </div>
-            <p className="text-sm leading-relaxed text-muted-foreground">{product.story}</p>
+            <p className="text-sm leading-relaxed text-muted-foreground">{copy.story}</p>
           </div>
 
           <div className="craft-card space-y-3 p-4">
@@ -65,8 +77,8 @@ export function ProductModal({ product, onClose }: { product: Product | null; on
             </p>
             <AuthenticityBadge giTag={product.giTag} />
             <p className="text-xs text-muted-foreground">
-              {t("modal.materials")}: {product.materials.join(", ")} · {t("modal.madeIn")} {product.labourHours}{" "}
-              {t("modal.handHours")}.
+              {t("modal.materials")}: {product.materials.join(", ")} · {t("modal.madeIn")}{" "}
+              {product.labourHours} {t("modal.handHours")}.
             </p>
           </div>
 

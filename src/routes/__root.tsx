@@ -12,6 +12,7 @@ import { type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { Toaster } from "@/components/ui/sonner";
 import { KalaProvider } from "@/lib/kala-store";
+import { NarratorProvider } from "@/lib/narrator";
 
 function NotFoundComponent() {
   return (
@@ -131,9 +132,11 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <KalaProvider>
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <Outlet />
-        <Toaster position="top-center" richColors />
+        <NarratorProvider>
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+          <Toaster position="top-center" richColors />
+        </NarratorProvider>
       </KalaProvider>
     </QueryClientProvider>
   );
