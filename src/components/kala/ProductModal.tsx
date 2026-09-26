@@ -7,6 +7,7 @@ import { QrSheet } from "@/components/kala/QrSheet";
 import { AuthenticityBadge } from "@/components/kala/shared";
 import { isClipId } from "@/content/narration";
 import { rupees, useKala, type Product } from "@/lib/kala-store";
+import { useNarrator } from "@/lib/narrator";
 import { localize } from "@/lib/products";
 
 export function ProductModal({
@@ -17,8 +18,13 @@ export function ProductModal({
   onClose: () => void;
 }) {
   const { language, t } = useKala();
+  const { stop } = useNarrator();
   const [qrOpen, setQrOpen] = useState(false);
   useEffect(() => setQrOpen(false), [product]);
+  // Closing the sheet silences its story; the route does not change, so the narrator won't.
+  useEffect(() => {
+    if (!product) stop();
+  }, [product, stop]);
   if (!product) return null;
 
   const copy = localize(product, language);
