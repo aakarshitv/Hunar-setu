@@ -1,10 +1,14 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Camera, Check, Coins, ImagePlus, Mic, Sparkles, Wand2, Eye } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { AppShell } from "@/components/kala/AppShell";
 import { AudioButton } from "@/components/kala/AudioButton";
+import { BeforeAfterSlider } from "@/components/kala/BeforeAfterSlider";
+import { CleanPhoto } from "@/components/kala/CleanPhoto";
 import { ProductModal } from "@/components/kala/ProductModal";
+import { ScanOverlay } from "@/components/kala/ScanOverlay";
+import { BG_STYLES, CLEAN, type BgStyle } from "@/lib/clean-assets";
 import {
   DEMO_DRAFT,
   DEMO_DRAFT_ID,
@@ -15,9 +19,6 @@ import {
 } from "@/lib/kala-store";
 import { localize } from "@/lib/products";
 import { cn } from "@/lib/utils";
-
-import rawShot from "@/assets/craft-raw.jpg";
-import cleanShot from "@/assets/craft-pottery.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -38,11 +39,22 @@ export const Route = createFileRoute("/")({
   component: StudioPage,
 });
 
+type Phase = "raw" | "scanning" | "clean";
+const REVEAL_MS = 1500;
+const bgLabelKey = {
+  studio: "studio.bgStudio",
+  linen: "studio.bgLinen",
+  indigo: "studio.bgIndigo",
+} as const;
+
 function StudioPage() {
   const { publishDraft, language, t } = useKala();
   const navigate = useNavigate();
 
-  const [cleaned, setCleaned] = useState(false);
+  const [phase, setPhase] = useState<Phase>("raw");
+  const [bgStyle, setBgStyle] = useState<BgStyle>("studio");
+  const revealed = useRef(false);
+  const cleaned = phase === "clean";
   const [enhanced, setEnhanced] = useState(false);
   const [recording, setRecording] = useState(false);
   const [seconds, setSeconds] = useState(0);
@@ -68,28 +80,86 @@ function StudioPage() {
     setAnalysed(true);
   };
 
-  const publish = () => setPublished(publishDraft(cleanShot));
+  useEffect(() => {
+    if (phase !== "scanning") return;
+    const timer = setTimeout(() => setPhase("clean"), REVEAL_MS);
+    return () => clearTimeout(timer);
+  }, [phase]);
+
+  // First tap runs the reveal; later taps toggle instantly.
+  const toggleClean = () => {
+    if (phase === "scanning") return;
+    if (phase === "clean") return setPhase("raw");
+    setPhase(revealed.current ? "clean" : "scanning");
+    revealed.current = true;
+  };
+
+  const publish = () => setPublished(publishDraft(CLEAN.composites[bgStyle]));
 
   return (
     <AppShell screen="studio" title={t("studio.title")} subtitle={t("studio.subtitle")}>
       <section className="craft-card overflow-hidden">
-        <div className="relative">
-          <img
-            src={cleaned ? cleanShot : rawShot}
-            alt={cleaned ? "Craft on clean studio background" : "Raw workshop photo of the craft"}
-            width={800}
-            height={800}
-            className={cn(
-              "aspect-square w-full object-cover transition-all duration-500",
-              enhanced && "contrast-110 saturate-125 brightness-105",
-            )}
-          />
-          <span className="absolute top-3 left-3 rounded-full bg-background/90 px-2.5 py-1 text-[11px] font-semibold">
-            {cleaned ? t("studio.studioShot") : t("studio.yourPhoto")}
-          </span>
+        <div className="relative aspect-square">
+          {cleaned ? (
+            <BeforeAfterSlider
+              before={
+                <img
+                  src={CLEAN.raw}
+                  alt="Raw workshop photo of the pot"
+                  draggable={false}
+                  className="size-full object-cover"
+                />
+              }
+              after={<CleanPhoto bgStyle={bgStyle} enhanced={enhanced} />}
+              label={t("studio.compare")}
+              beforeLabel={t("studio.before")}
+              afterLabel={t("studio.after")}
+            />
+          ) : (
+            <img
+              src={CLEAN.raw}
+              alt="Raw workshop photo of the pot"
+              width={800}
+              height={800}
+              className="size-full object-cover"
+            />
+          )}
+          {phase === "scanning" && <ScanOverlay label={t("studio.finding")} />}
+          {cleaned ? (
+            <span className="pointer-events-none absolute bottom-3 left-3 rounded-full bg-leaf px-2.5 py-1 text-[11px] font-semibold text-leaf-foreground">
+              {t("studio.pixelsUnchanged")}
+            </span>
+          ) : (
+            <span className="absolute top-3 left-3 rounded-full bg-background/90 px-2.5 py-1 text-[11px] font-semibold">
+              {t("studio.yourPhoto")}
+            </span>
+          )}
         </div>
 
         <div className="space-y-3 p-4">
+          {cleaned && (
+            <div className="flex items-center justify-center gap-4">
+              {BG_STYLES.map((style) => (
+                <button
+                  key={style}
+                  type="button"
+                  onClick={() => setBgStyle(style)}
+                  aria-pressed={bgStyle === style}
+                  className="flex flex-col items-center gap-1 text-[11px] font-medium"
+                >
+                  <img
+                    src={CLEAN.backgrounds[style]}
+                    alt=""
+                    className={cn(
+                      "size-11 rounded-full object-cover ring-2 ring-offset-2 ring-offset-card",
+                      bgStyle === style ? "ring-primary" : "ring-transparent",
+                    )}
+                  />
+                  {t(bgLabelKey[style])}
+                </button>
+              ))}
+            </div>
+          )}
           <div className="grid grid-cols-3 gap-2">
             {[0, 1, 2].map((i) => (
               <div
@@ -107,10 +177,10 @@ function StudioPage() {
           <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
-              onClick={() => setCleaned((v) => !v)}
+              onClick={toggleClean}
               className={cn(
                 "flex items-center justify-center gap-2 rounded-xl py-3 text-xs font-semibold",
-                cleaned
+                phase !== "raw"
                   ? "bg-indigo text-indigo-foreground"
                   : "bg-secondary text-secondary-foreground",
               )}
@@ -120,8 +190,9 @@ function StudioPage() {
             <button
               type="button"
               onClick={() => setEnhanced((v) => !v)}
+              disabled={!cleaned}
               className={cn(
-                "flex items-center justify-center gap-2 rounded-xl py-3 text-xs font-semibold",
+                "flex items-center justify-center gap-2 rounded-xl py-3 text-xs font-semibold disabled:opacity-50",
                 enhanced
                   ? "bg-indigo text-indigo-foreground"
                   : "bg-secondary text-secondary-foreground",
