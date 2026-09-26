@@ -39,6 +39,7 @@ export type Product = {
   status: ProductStatus;
   origin: string;
   giTag: string;
+  certId: string;
 };
 
 export type Channel = {
@@ -65,6 +66,7 @@ const seedProducts: Product[] = [
     status: "listed",
     origin: "Kutch, Gujarat",
     giTag: "GI: Khavda Pottery",
+    certId: "HS-2026-0017",
   },
   {
     id: "p2",
@@ -82,6 +84,7 @@ const seedProducts: Product[] = [
     status: "pending",
     origin: "Pochampally, Telangana",
     giTag: "GI: Pochampally Ikat",
+    certId: "HS-2026-0023",
   },
   {
     id: "p3",
@@ -99,6 +102,7 @@ const seedProducts: Product[] = [
     status: "sold",
     origin: "Bastar, Chhattisgarh",
     giTag: "GI: Bastar Dhokra",
+    certId: "HS-2026-0031",
   },
 ];
 
@@ -167,6 +171,7 @@ export const DEMO_DRAFT: NewProductInput = {
   stock: 5,
   origin: "Kutch, Gujarat",
   giTag: "GI: Khavda Pottery",
+  certId: "HS-2026-0042",
 };
 
 export function buildDraftProduct(image: string): Product {
@@ -177,6 +182,13 @@ export function buildDraftProduct(image: string): Product {
     price: suggestedPrice(DEMO_DRAFT),
     status: "listed",
   };
+}
+
+const STATIC_PRODUCTS: Product[] = [...seedProducts, buildDraftProduct(DEMO_DRAFT.image)];
+
+/** Products known without client state — used by the public verification page. */
+export function getStaticProduct(id: string) {
+  return STATIC_PRODUCTS.find((p) => p.id === id);
 }
 
 type KalaContextValue = {
@@ -190,6 +202,7 @@ type KalaContextValue = {
   advanceOrder: (id: string) => void;
   lastTransfer: number;
   publishDraft: (image: string) => Product;
+  getProduct: (id: string) => Product | undefined;
 };
 
 const KalaContext = createContext<KalaContextValue | null>(null);
@@ -222,6 +235,11 @@ export function KalaProvider({ children }: { children: ReactNode }) {
     return product;
   }, []);
 
+  const getProduct = useCallback(
+    (id: string) => products.find((p) => p.id === id) ?? getStaticProduct(id),
+    [products],
+  );
+
   const t = useCallback((key: TranslationKey) => translate(language, key), [language]);
 
   const value = useMemo(
@@ -236,6 +254,7 @@ export function KalaProvider({ children }: { children: ReactNode }) {
       advanceOrder,
       lastTransfer,
       publishDraft,
+      getProduct,
     }),
     [
       language,
@@ -247,6 +266,7 @@ export function KalaProvider({ children }: { children: ReactNode }) {
       advanceOrder,
       lastTransfer,
       publishDraft,
+      getProduct,
     ],
   );
 

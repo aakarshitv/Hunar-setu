@@ -102,7 +102,7 @@ function CatalogPage() {
                 <p className="text-[11px] text-muted-foreground">
                   {p.stock} {t("catalog.inStock")}
                 </p>
-                <AuthenticityBadge giTag={p.giTag} />
+                <AuthenticityBadge productId={p.id} giTag={p.giTag} />
               </div>
             </button>
           ))}
